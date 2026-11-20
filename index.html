@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hidroponía Triple B — App Interactiva 3D & Monitoreo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<style>
+  :root {
+    --forest: #115E24;
+    --leaf: #2B8A3E;
+    --lime: #74B816;
+    --white: #FFFFFF;
+    --charcoal: #2D3748;
+    --water: #38BDF8;
+    --bg: #F4F7F5;
+    --border: #E2E8F0;
+    --muted: #64748B;
+    --shadow: 0 4px 16px rgba(17, 94, 36, 0.08);
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Open Sans', 'Segoe UI', sans-serif;
+    color: var(--charcoal);
+    background: var(--bg);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+  }
+
+  /* HEADER & TABS */
+  .topbar {
+    background: linear-gradient(135deg, var(--forest) 0%, #0D4A1C 100%);
+    color: var(--white);
+    padding: 14px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .topbar-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--lime);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  .brand h1 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    line-height: 1.15;
+  }
+
+  .brand p {
+    font-size: 0.78rem;
+    color: #A7F3D0;
+    font-weight: 600;
+  }
+
+  .main-tabs {
+    display: flex;
+    background: rgba(255,255,255,0.12);
+    padding: 4px;
+    border-radius: 12px;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.85);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.88rem;
+    padding: 9px 20px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  .tab-btn:hover {
+    color: var(--white);
+    background: rgba(255,255,255,0.1);
+  }
+
+  .tab-btn.active {
+    background: var(--white);
+    color: var(--forest);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  /* MAIN CONTAINER */
+  .container {
+    max-width: 1240px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 22px 20px 48px;
+    flex: 1;
+  }
+
+  .section-view { display: none; }
+  .section-view.active { display: block; animation: fadeIn 0.25s ease; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* QUICK ACCESS STRIP (HACER) */
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
+  }
+
+  .quick-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .quick-head {
+    background: #F0FDF4;
+    border-bottom: 1px solid #DCFCE7;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .quick-head-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .pill {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+  }
+
+  .pill-forest { background: var(--forest); color: var(--white); }
+  .pill-lime { background: var(--lime); color: var(--white); }
+  .pill-water { background: #E0F2FE; color: #0369A1; }
+  .pill-warn { background: #FEF3C7; color: #92400E; }
+
+  .quick-head h2 {
+    font-size: 0.96rem;
+    color: var(--forest);
+    font-weight: 800;
+  }
+
+  .quick-body {
+    padding: 14px 16px;
+    font-size: 0.86rem;
+    display: grid;
+    gap: 10px;
+  }
+
+  .quick-body.collapsed { display: none; }
+
+  .rule-box {
+    background: #E0F2FE;
+    border-left: 4px solid var(--water);
+    padding: 9px 12px;
+    border-radius: 6px;
+    font-size: 0.84rem;
+  }
+
+  .option-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .option-row { grid-template-columns: 1fr; }
+  }
+
+  .sub-box {
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-size: 0.82rem;
+  }
+
+  .sub-box strong { color: var(--forest); display: block; margin-bottom: 3px; }
+
+  .semillero-methods {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  @media (max-width: 560px) {
+    .semillero-methods { grid-template-columns: 1fr; }
+  }
+
+  .method-chip {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+
+  .method-chip b { color: var(--forest); display: block; margin-bottom: 2px; }
+
+  /* LEVEL HEADERS & CATALOG */
+  .level-block {
+    margin-bottom: 28px;
+  }
+
+  .level-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #D1FAE5;
+  }
+
+  .level-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .level-tag {
+    background: var(--forest);
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.78rem;
+    padding: 5px 12px;
+    border-radius: 999px;
+  }
+
+  .level-tag.l2 { background: var(--leaf); }
+  .level-tag.l3 { background: #0369A1; }
+
+  .level-header h3 {
+    font-size: 1.08rem;
+    color: var(--charcoal);
+    font-weight: 800;
+  }
+
+  .level-power {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--white);
+    padding: 4px 11px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(275px, 1fr));
+    gap: 16px;
+  }
+
+  .sys-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    cursor: pointer;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+
+  .sys-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--lime);
+    box-shadow: 0 10px 24px rgba(17, 94, 36, 0.13);
+  }
+
+  .sys-card-top {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .sys-thumb {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .sys-code {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--leaf);
+    text-transform: uppercase;
+  }
+
+  .sys-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 800;
+    color: var(--forest);
+    line-height: 1.2;
+  }
+
+  .sys-specs {
+    font-size: 0.8rem;
+    color: #475569;
+    background: #F8FAFC;
+    border-radius: 8px;
+    padding: 8px 10px;
+    flex: 1;
+  }
+
+  .sys-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 4px;
+  }
+
+  .btn-3d {
+    background: var(--forest);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 7px 13px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.78rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s;
+  }
+
+  .btn-3d:hover { background: var(--leaf); }
+
+  /* 3D MODAL VIEWER */
+  .viewer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .viewer-overlay.open { display: flex; }
+
+  .viewer-modal {
+    background: var(--white);
+    width: 100%;
+    max-width: 1120px;
+    height: 88vh;
+    max-height: 760px;
+    border-radius: 18px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.3);
+  }
+
+  .viewer-header {
+    background: var(--forest);
+    color: var(--white);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .viewer-header h3 {
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .viewer-header small {
+    color: #A7F3D0;
+    font-size: 0.78rem;
+    display: block;
+  }
+
+  .btn-close {
+    background: rgba(255,255,255,0.16);
+    color: var(--white);
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-close:hover { background: rgba(255,255,255,0.28); }
+
+  .viewer-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    min-height: 0;
+  }
+
+  @media (max-width: 860px) {
+    .viewer-body { grid-template-columns: 1fr; grid-template-rows: 52% 48%; }
+    .viewer-modal { height: 94vh; max-height: none; }
+  }
+
+  .canvas-wrap {
+    position: relative;
+    background: linear-gradient(180deg, #E0F2FE 0%, #F1F5F9 70%, #E2E8F0 100%);
+    min-height: 260px;
+    overflow: hidden;
+  }
+
+  #three-container {
+    width: 100%;
+    height: 100%;
+  }
+
+  .canvas-hud {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    gap: 8px;
+  }
+
+  .hud-hint {
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(4px);
+    color: var(--charcoal);
+    font-size: 0.73rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .btn-reframe {
+    pointer-events: auto;
+    background: var(--white);
+    color: var(--forest);
+    border: 1.5px solid var(--forest);
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .btn-reframe:hover {
+    background: var(--forest);
+    color: var(--white);
+  }
+
+  .steps-panel {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--border);
+    background: var(--white);
+    min-height: 0;
+  }
+
+  .steps-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .step-item {
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    transition: all 0.15s ease;
+  }
+
+  .step-item:hover { border-color: var(--lime); background: #FAFFF5; }
+
+  .step-item.active {
+    border-color: var(--forest);
+    background: #F0FDF4;
+    box-shadow: 0 2px 8px rgba(17, 94, 36, 0.1);
+  }
+
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 2px solid var(--forest);
+    color: var(--forest);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.76rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-item.active .step-num {
+    background: var(--forest);
+    color: var(--white);
+  }
+
+  .step-text h4 {
+    font-size: 0.85rem;
+    color: var(--forest);
+    margin-bottom: 2px;
+  }
+
+  .step-text p {
+    font-size: 0.8rem;
+    color: var(--charcoal);
+    line-height: 1.35;
+  }
+
+  .step-meta-box {
+    margin: 0 16px 10px;
+    padding: 9px 12px;
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.78rem;
+    color: #334155;
+  }
+
+  .steps-controls {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    background: #F8FAFC;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .btn-nav {
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--charcoal);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .btn-nav:disabled { opacity: 0.45; cursor: not-allowed; }
+  .btn-nav.primary { background: var(--lime); color: var(--white); border-color: var(--lime); }
+  .btn-nav.primary:hover:not(:disabled) { background: var(--leaf); border-color: var(--leaf); }
+
+  /* MONITOREO SECTION */
+  .mon-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 920px) {
+    .mon-grid { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+
+  .panel-title {
+    font-size: 1rem;
+    color: var(--forest);
+    font-weight: 800;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .field input, .field select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--charcoal);
+    background: var(--white);
+  }
+
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--leaf);
+  }
+
+  .btn-primary {
+    background: var(--forest);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover { background: var(--leaf); }
+
+  .btn-sm-danger {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-sm-ok {
+    background: #DCFCE7;
+    color: #166534;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 9px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .lot-card {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 13px;
+    margin-bottom: 10px;
+    background: #FAFCFB;
+  }
+
+  .lot-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .lot-dates {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    font-size: 0.78rem;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px;
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 540px) {
+    .lot-dates { grid-template-columns: 1fr; }
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: #E2E8F0;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--lime), var(--forest));
+    border-radius: 999px;
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .checklist-item:hover { background: #F8FAFC; }
+  .checklist-item.done { background: #F0FDF4; border-color: #BBF7D0; }
+
+  .checklist-item input[type="checkbox"] {
+    margin-top: 3px;
+    width: 17px;
+    height: 17px;
+    accent-color: var(--forest);
+    cursor: pointer;
+  }
+
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: #F0FDF4;
+    color: var(--forest);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.75rem;
+  }
+
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .kpi-box {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .kpi-val {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--forest);
+  }
+
+  .kpi-lbl {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 0.85rem;
+    border: 1.5px dashed var(--border);
+    border-radius: 10px;
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-badge">🌱</div>
+      <div>
+        <h1>HIDROPONÍA TRIPLE B</h1>
+        <p>Buena, Bonita y Barata • Guía 3D &amp; Monitoreo</p>
+      </div>
+    </div>
+    <nav class="main-tabs" aria-label="Apartados principales">
+      <button class="tab-btn active" data-tab="hacer" onclick="switchTab('hacer')">🛠️ HACER (Guía 3D)</button>
+      <button class="tab-btn" data-tab="monitoreo" onclick="switchTab('monitoreo')">📊 MONITOREO</button>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- ==================== APARTADO 1: HACER ==================== -->
+  <section id="view-hacer" class="section-view active">
+
+    <!-- Acceso Rápido Superior -->
+    <div class="quick-grid">
+      <div class="quick-card">
+        <div class="quick-head" onclick="toggleQuick('q-nutricion')">
+          <div class="quick-head-title">
+            <span class="pill pill-water">Acceso Rápido</span>
+            <h2>Preparación Base: Agua y Nutrición</h2>
+          </div>
+          <span>▾</span>
+        </div>
+        <div class="quick-body" id="q-nutricion">
+          <div class="rule-box">
+            <strong>💧 Regla de Oro (Agua Reposada 24h):</strong> Deja reposar el agua de llave <strong>24 horas al sol destapada</strong> para que se evapore el cloro antes de agregar cualquier nutriente.
+          </div>
+          <div class="option-row">
+            <div class="sub-box">
+              <strong>Opción A: Sales Minerales</strong>
+              Fórmulas hidropónicas completas (Sal Mayor N-P-K + Sal Menor Micronutrientes). Disuelve <strong>1ro Sal Mayor y luego Sal Menor</strong> en el agua. ¡Nunca juntas en seco!
+            </div>
+            <div class="sub-box">
+              <strong>Opción B: Abono Casero (1:10)</strong>
+              Lixiviado de lombriz o té de compost maduro en proporción <strong>1:10</strong> (color té suave). Colar siempre con tela muy fina para no obstruir raíces.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-card">
+        <div class="quick-head" onclick="toggleQuick('q-semillero')">
+          <div class="quick-head-title">
+            <span class="pill pill-lime">Paso 0 Obligatorio</span>
+            <h2>El Semillero (7–12 días)</h2>
+          </div>
+          <span>▾</span>
+        </div>
+        <div class="quick-body" id="q-semillero">
+          <div class="semillero-methods">
+            <div class="method-chip">
+              <b>1 · Esponja</b>
+              Cubo 2×2 cm con corte central y 1–2 semillas. Mantener húmeda.
+            </div>
+            <div class="method-chip">
+              <b>2 · Servilleta</b>
+              Papel húmedo en plato, tapado 3 días en oscuridad.
+            </div>
+            <div class="method-chip">
+              <b>3 · Fibra de Coco</b>
+              Vasito lavado húmedo; siembra a 0.5 cm de profundidad.
+            </div>
+          </div>
+          <div class="rule-box" style="background:#F0FDF4; border-left-color:var(--lime);">
+            <strong>✔ Listo para trasplantar:</strong> Riega solo con agua limpia reposada (sin nutrientes) por <strong>7–12 días</strong> con luz suave hasta lograr <strong>3–4 hojas verdaderas y 4–5 cm de raíz sana</strong>. ¡Antes no la muevas!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Catálogo Clasificado por Niveles -->
+    <div id="catalog-container"></div>
+
+  </section>
+
+  <!-- ==================== APARTADO 2: MONITOREO ==================== -->
+  <section id="view-monitoreo" class="section-view">
+    <div class="mon-grid">
+
+      <!-- Columna Izquierda: Lotes Activos y Tabla Oficial -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>🌱 Nuevo Lote de Cultivo</span>
+            <span class="pill pill-lime">localStorage</span>
+          </div>
+          <form id="lot-form" onsubmit="addLot(event)">
+            <div class="form-grid">
+              <div class="field">
+                <label for="lot-crop">Cultivo Oficial</label>
+                <select id="lot-crop" required></select>
+              </div>
+              <div class="field">
+                <label for="lot-system">Sistema / Nivel</label>
+                <select id="lot-system" required></select>
+              </div>
+              <div class="field">
+                <label for="lot-date">Inicio Semillero</label>
+                <input type="date" id="lot-date" required>
+              </div>
+              <div class="field">
+                <label for="lot-alias">Nombre / Lote (opcional)</label>
+                <input type="text" id="lot-alias" placeholder="Ej: Balcón Norte">
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">+ Registrar Lote Activo</button>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>🌿 Lotes Activos y Fechas Automatizadas</span>
+            <span id="lots-count" class="pill pill-forest">0 activos</span>
+          </div>
+          <div id="lots-list"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>📋 Tabla Oficial de Cultivos (Cartilla Triple B)</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Cultivo</th>
+                  <th>Germinación</th>
+                  <th>Tiempo a Cosecha</th>
+                  <th>Mantenimiento / Notas</th>
+                </tr>
+              </thead>
+              <tbody id="official-crops-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Checklist de Mantenimiento y Registro de Cosechas -->
+      <div>
+        <div class="panel">
+          <div class="panel-title">
+            <span>✅ Checklist de Mantenimiento</span>
+            <button type="button" class="btn-nav" style="padding:4px 10px; font-size:0.74rem;" onclick="resetChecklist()">Reiniciar ciclo</button>
+          </div>
+          <div id="checklist-container"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-title">
+            <span>🧺 Registro de Cosechas Completadas</span>
+          </div>
+          <div class="kpi-row">
+            <div class="kpi-box">
+              <div class="kpi-val" id="kpi-total">0</div>
+              <div class="kpi-lbl">Cosechas</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-val" id="kpi-kg">0 kg</div>
+              <div class="kpi-lbl">Peso Total</div>
+            </div>
+            <div class="kpi-box">
+              <div class="kpi-val" id="kpi-units">0 ud</div>
+              <div class="kpi-lbl">Unidades</div>
+            </div>
+          </div>
+
+          <form id="harvest-form" onsubmit="addHarvest(event)" style="margin-bottom:14px;">
+            <div class="form-grid">
+              <div class="field">
+                <label for="h-crop">Cultivo</label>
+                <select id="h-crop" required></select>
+              </div>
+              <div class="field">
+                <label for="h-date">Fecha</label>
+                <input type="date" id="h-date" required>
+              </div>
+              <div class="field">
+                <label for="h-qty">Cantidad / Peso</label>
+                <input type="number" id="h-qty" step="0.01" min="0.01" placeholder="Ej: 1.5" required>
+              </div>
+              <div class="field">
+                <label for="h-unit">Unidad</label>
+                <select id="h-unit">
+                  <option value="kg">kg</option>
+                  <option value="unidades">unidades</option>
+                </select>
+              </div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <label for="h-dest">Destino del Producto</label>
+                <select id="h-dest">
+                  <option value="Consumo familiar">Consumo familiar</option>
+                  <option value="Venta de excedentes">Venta de excedentes</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary">+ Guardar Cosecha</button>
+          </form>
+
+          <div id="harvest-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== MODAL VISOR 3D ==================== -->
+<div class="viewer-overlay" id="viewer-overlay" role="dialog" aria-modal="true">
+  <div class="viewer-modal">
+    <div class="viewer-header">
+      <div>
+        <h3 id="viewer-title">1.1 Sistema de Mecha</h3>
+        <small id="viewer-subtitle">Nivel 1 • Cero Electricidad</small>
+      </div>
+      <button class="btn-close" onclick="closeViewer()" title="Cerrar visor">✕</button>
+    </div>
+    <div class="viewer-body">
+      <div class="canvas-wrap">
+        <div id="three-container"></div>
+        <div class="canvas-hud">
+          <div class="hud-hint">🖱️ Arrastra para rotar 360° • Rueda para zoom • Clic derecho para mover</div>
+          <button class="btn-reframe" onclick="reframeCamera()">🎯 Reencuadrar</button>
+        </div>
+      </div>
+      <div class="steps-panel">
+        <div class="steps-list" id="viewer-steps-list"></div>
+        <div class="step-meta-box" id="viewer-meta"></div>
+        <div class="steps-controls">
+          <button class="btn-nav" id="btn-prev" onclick="changeStep(-1)">← Anterior</button>
+          <span id="step-counter" style="font-size:0.8rem; font-weight:700; color:var(--forest);">Paso 1 / 5</span>
+          <button class="btn-nav primary" id="btn-next" onclick="changeStep(1)">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 1. DATOS OFICIALES DE LA CARTILLA HIDROPONÍA TRIPLE B
+// ============================================================
+const LEVELS_DATA = [
+  {
+    level: 1,
+    badge: "Nivel 1 • Cero Electricidad",
+    title: "Modelos Pasivos con Reciclaje",
+    power: "⚡ 0W (Sin consumo eléctrico)",
+    tagClass: "",
+    systems: [
+      {
+        id: "1.1",
+        name: "Sistema de Mecha (Botella PET)",
+        specs: "Botella PET 2L–3L • Tira de algodón • Sustrato inerte (coco/arena) • Esponja",
+        power: "0W",
+        luz: "4 a 6 h de sol suave o indirecto al día.",
+        agua: "Revisa y rellena la solución cada 5 a 7 días. Sustrato siempre húmedo.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="20" y="28" width="24" height="28" rx="4" fill="#E0F2FE" stroke="#115E24" stroke-width="2"/><path d="M20 40h24v12a4 4 0 0 1-4 4H24a4 4 0 0 1-4-4V40z" fill="#38BDF8" opacity="0.65"/><polygon points="20,12 44,12 36,28 28,28" fill="#DCFCE7" stroke="#115E24" stroke-width="2"/><line x1="32" y1="28" x2="32" y2="50" stroke="#F59E0B" stroke-width="2.5" stroke-dasharray="3 2"/><path d="M32 12c-5-8-10-4-8 0M32 12c5-8 10-4 8 0" fill="#74B816"/></svg>`,
+        steps: [
+          { title: "Botella con guía de corte", desc: "Botella PET 2L–3L entera con anillo punteado a 1/3 de la altura desde la base." },
+          { title: "Corte a 1/3 y separación", desc: "Corta la botella a 1/3 y separa la parte superior hacia el lado de la base." },
+          { title: "Perforación y cordón", desc: "Perfora la tapa e introduce el cordón de algodón humedecido como mecha." },
+          { title: "Embudo invertido y agua", desc: "Invierte el embudo con sustrato húmedo (coco o arena) y añade agua nutritiva en la base." },
+          { title: "Fijación de la plántula", desc: "Fija la plántula con tira de esponja abrazando el tallo seco; solo la raíz toca el sustrato." }
+        ]
+      },
+      {
+        id: "1.2",
+        name: "Raíz Flotante (Tina o Balde)",
+        specs: "Tina plástica 15L • Lámina icopor 2 cm • Vasitos de red • Esponja",
+        power: "0W",
+        luz: "4 a 6 h de sol suave o indirecto al día.",
+        agua: "Revisa y rellena la solución cada 5 a 7 días. Hojas siempre arriba del icopor.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><polygon points="12,24 52,24 48,54 16,54" fill="#E0F2FE" stroke="#115E24" stroke-width="2"/><rect x="14" y="34" width="36" height="18" fill="#38BDF8" opacity="0.55"/><rect x="14" y="29" width="36" height="5" rx="2" fill="#FFFFFF" stroke="#64748B" stroke-width="1.5"/><circle cx="24" cy="24" r="4" fill="#74B816"/><circle cx="40" cy="24" r="4" fill="#74B816"/></svg>`,
+        steps: [
+          { title: "Recortar lámina de icopor", desc: "Corta la placa de icopor de 2 cm dejando 1 cm menor al contorno de la tina 15L." },
+          { title: "Perforar orificios", desc: "Abre agujeros circulares donde encajen firmemente los vasitos plásticos de red." },
+          { title: "Fijar plántula con esponja", desc: "Abraza el tallo seco con tira de esponja y colócala en el vasito perforado." },
+          { title: "Poner a flotar", desc: "Llena la tina con solución nutritiva; el icopor flota y baja junto con el nivel." }
+        ]
+      },
+      {
+        id: "1.3",
+        name: "Sistema Kratky (Galón Oscuro)",
+        specs: "Galón oscuro 4–5L pintado de negro • Vaso red perforado • Esponja",
+        power: "0W",
+        luz: "4 a 6 h de sol suave o indirecto al día.",
+        agua: "Revisa cada 5 a 7 días. ¡Nunca llenes hasta el tope! Mantén la cámara de aire.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="16" y="18" width="32" height="38" rx="6" fill="#2D3748" stroke="#115E24" stroke-width="2"/><rect x="25" y="12" width="14" height="8" rx="2" fill="#74B816"/><path d="M32 12c-6-8-10-2-6 2M32 12c6-8 10-2 6 2" fill="#74B816"/><rect x="20" y="36" width="24" height="16" rx="2" fill="#38BDF8" opacity="0.6"/></svg>`,
+        steps: [
+          { title: "Bloquear entrada de luz", desc: "Pinta el galón 4–5L de negro o fórralo para evitar algas y hongos en la raíz." },
+          { title: "Montar vasito en la boca", desc: "Perfora la tapa o boca del galón para encajar el vasito de red." },
+          { title: "Llenado inicial y cámara de aire", desc: "Llena de agua nutritiva tocando solo el fondo del vaso; al bajar crea cámara de aire." },
+          { title: "Fijar plántula", desc: "Abraza el tallo con esponja en el vaso; deja siempre la cámara de aire libre al rellenar." }
+        ]
+      },
+      {
+        id: "1.4",
+        name: "Columna Vertical (Botellas Apiladas)",
+        specs: "3 botellas PET apiladas • Alambre de fijación • Punzón 2 mm • Esponja",
+        power: "0W",
+        luz: "4 a 6 h de sol suave o indirecto al día.",
+        agua: "Revisa cada 5 a 7 días. Riega arriba hasta que gotee piso a piso.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="24" y="8" width="16" height="15" rx="3" fill="#E0F2FE" stroke="#115E24" stroke-width="1.8"/><rect x="24" y="25" width="16" height="15" rx="3" fill="#E0F2FE" stroke="#115E24" stroke-width="1.8"/><rect x="24" y="42" width="16" height="15" rx="3" fill="#E0F2FE" stroke="#115E24" stroke-width="1.8"/><circle cx="20" cy="15" r="3.5" fill="#74B816"/><circle cx="44" cy="32" r="3.5" fill="#74B816"/><circle cx="20" cy="49" r="3.5" fill="#74B816"/></svg>`,
+        steps: [
+          { title: "Corte de ventanas laterales", desc: "Abre una ventana rectangular en el centro de cada una de las 3 botellas PET." },
+          { title: "Tapas con orificio de 2 mm", desc: "Haz un hoyo de 2 mm en la tapa de las botellas 1 y 2 para el goteo controlado." },
+          { title: "Apilar en torre", desc: "Encaja el pico de la botella superior en la base de la inferior y fija con alambre." },
+          { title: "Riego en cascada y plántulas", desc: "Vierte agua nutritiva arriba y fija cada plántula con esponja en su ventana." }
+        ]
+      }
+    ]
+  },
+  {
+    level: 2,
+    badge: "Nivel 2 • Con Bomba de Pecera 5W",
+    title: "Sistemas Recirculantes de Alta Eficiencia",
+    power: "⚡ ~5W (Menos que un bombillo LED)",
+    tagClass: "l2",
+    systems: [
+      {
+        id: "2.1",
+        name: "Tubos en Cascada (NFT Casero)",
+        specs: "Tubos PVC 3\" o 4\" con pendiente 2–3% • Codos PVC • Balde 20L • Bomba 300–500 L/h",
+        power: "5W",
+        luz: "5 a 6 h de sol directo suave o luz indirecta abundante.",
+        agua: "Bomba continua de día o 15 min ON / 15 min OFF. Limpiar balde cada 7 días.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><line x1="10" y1="16" x2="52" y2="22" stroke="#115E24" stroke-width="6" stroke-linecap="round"/><line x1="52" y1="28" x2="12" y2="34" stroke="#2B8A3E" stroke-width="6" stroke-linecap="round"/><rect x="12" y="42" width="18" height="14" rx="2" fill="#38BDF8" stroke="#115E24" stroke-width="2"/><circle cx="22" cy="12" r="3" fill="#74B816"/><circle cx="38" cy="15" r="3" fill="#74B816"/></svg>`,
+        steps: [
+          { title: "Pendiente suave (2% al 3%)", desc: "Monta los tubos PVC con desnivel de 2–3 cm por metro para que el agua corra sin empozarse." },
+          { title: "Circuito cerrado y bomba 5W", desc: "Coloca la bombita en el fondo del balde 20L; la manguera sube el agua al extremo alto." },
+          { title: "Película NFT y plántulas", desc: "El agua baja en lámina de 1–2 cm mojando solo puntas de raíz; fija plántulas con esponja." },
+          { title: "Retorno en cascada libre", desc: "El desagüe cae al balde desde 15–20 cm inyectando oxígeno fresco sin aireador." }
+        ]
+      },
+      {
+        id: "2.2",
+        name: "Torre Vertical Recirculante",
+        specs: "Tubo PVC 4\" o 6\" (1.5m) con bolsillos al calor • Balde 20L • Bomba 600–800 L/h",
+        power: "5W",
+        luz: "Girar la torre 90° cada 3 días para uniformidad de luz.",
+        agua: "Timer 15 min ON / 15 min OFF. Lluvia interna baña raíces suspendidas.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="25" y="10" width="14" height="34" rx="2" fill="#E2E8F0" stroke="#115E24" stroke-width="2"/><rect x="18" y="44" width="28" height="14" rx="3" fill="#38BDF8" stroke="#115E24" stroke-width="2"/><circle cx="21" cy="18" r="3.5" fill="#74B816"/><circle cx="43" cy="25" r="3.5" fill="#74B816"/><circle cx="21" cy="33" r="3.5" fill="#74B816"/></svg>`,
+        steps: [
+          { title: "Bolsillos al calor a 45°", desc: "Haz ranuras de 8 cm en el PVC 4\"–6\", calienta y empuja hacia adentro a 45°." },
+          { title: "Manguera central y regadera", desc: "Sube manguera desde la bomba en el balde hasta la cima con tapón perforado." },
+          { title: "Lluvia interna aeropónica", desc: "El agua cae en ducha por las paredes internas bañando las raíces al aire libre." },
+          { title: "Instalar plántulas", desc: "Encaja esponja abrazando el tallo en cada bolsillo; gira 90° cada 3 días." }
+        ]
+      },
+      {
+        id: "2.3",
+        name: "Inundación y Drenaje (2 Baldes)",
+        specs: "2 baldes 20L apilados • Grava de río lavada • Tubo rebose • Timer (15m ON / 105m OFF)",
+        power: "5W",
+        luz: "Ideal para albahaca, hierbabuena y tomate cherry con tutor.",
+        agua: "Timer: 15 min encendido cada 2 horas de día (105 min OFF). Revisar nivel cada 4 días.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="18" y="14" width="28" height="18" rx="3" fill="#CBD5E0" stroke="#115E24" stroke-width="2"/><rect x="18" y="36" width="28" height="20" rx="3" fill="#38BDF8" stroke="#115E24" stroke-width="2"/><path d="M32 14v-6M28 10l4-4 4 4" stroke="#74B816" stroke-width="2.5" fill="none"/></svg>`,
+        steps: [
+          { title: "Dos baldes apilados", desc: "El balde superior lleva grava limpia y tubo pasamuros; el inferior guarda la solución." },
+          { title: "Inundación (15 min ON)", desc: "El timer enciende la bomba; el agua sube e inunda la grava hasta el nivel del rebose." },
+          { title: "Drenaje (105 min OFF)", desc: "La bomba se apaga; el agua drena por gravedad succionando aire fresco a la raíz." },
+          { title: "Siembra firme en grava", desc: "Entierra las raíces en la grava húmeda. Ideal para tomate cherry con tutor." }
+        ]
+      }
+    ]
+  },
+  {
+    level: 3,
+    badge: "Nivel 3 • Acuaponía con Tilapias",
+    title: "Granja Integral: Peces + Hortalizas",
+    power: "⚡ Bomba sumergible + Gravedad • Cero Químicos",
+    tagClass: "l3",
+    systems: [
+      {
+        id: "3.1",
+        name: "Ciclo Biológico Cerrado (Tilapias)",
+        specs: "Tilapias (10–15 alevinos/100L) → Filtro Bio → Cama de Cultivo → Retorno en Cascada",
+        power: "5–10W",
+        luz: "Pellets 2 veces/día (solo lo que coman en 5 min). ¡Prohibido químicos o pesticidas!",
+        agua: "Caída en cascada continua para inyectar oxígeno disuelto a los peces.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><circle cx="32" cy="32" r="22" fill="none" stroke="#38BDF8" stroke-width="4" stroke-dasharray="10 5"/><path d="M22 36c6-6 14-6 20 0-6 6-14 6-20 0z" fill="#F97316"/><path d="M30 14c-4-6-8-2-4 2M30 14c4-6 8-2 4 2" fill="#74B816"/></svg>`,
+        steps: [
+          { title: "Tanque de Tilapias (10–15/100L)", desc: "Los peces generan desechos orgánicos en el agua. Alimentar 2 veces/día (regla 5 min)." },
+          { title: "Filtro Biológico (Bacterias)", desc: "Bacterias benéficas transforman el amonio de los peces en nitratos asimilables." },
+          { title: "Cama de Cultivo (Hortalizas)", desc: "Las plantas absorben los nitratos como alimento natural y purifican el agua." },
+          { title: "Retorno en Cascada Oxigenante", desc: "El agua limpia cae al tanque inyectando oxígeno. ¡PROHIBIDO usar químicos!" }
+        ]
+      },
+      {
+        id: "3.2",
+        name: "Montaje Casero de 3 Piezas",
+        specs: "Caneca 200L + Balde Filtro 20L + Cama 50L accionados por gravedad • Bomba 600–800 L/h",
+        power: "5–10W",
+        luz: "Alimentar peces 2 veces/día. Enjuagar esponja del filtro cada 15 días sin jabón.",
+        agua: "Una sola bomba sube agua al filtro; el resto del circuito fluye 100% por gravedad.",
+        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="8" y="34" width="18" height="22" rx="2" fill="#38BDF8" stroke="#115E24" stroke-width="1.8"/><rect x="26" y="20" width="14" height="18" rx="2" fill="#94A3B8" stroke="#115E24" stroke-width="1.8"/><rect x="40" y="14" width="18" height="14" rx="2" fill="#74B816" stroke="#115E24" stroke-width="1.8"/></svg>`,
+        steps: [
+          { title: "Nivelar 3 piezas por gravedad", desc: "Caneca 200L en el suelo, cama 50L más alta sobre soporte y balde filtro 20L a un costado." },
+          { title: "Impulsión al filtro", desc: "Bomba sumergible en la caneca sube agua con heces directo a la base del balde filtro." },
+          { title: "Paso a la cama de cultivo", desc: "El agua atraviesa esponja y grava volcánica y desborda hacia la cama de hortalizas." },
+          { title: "Retorno en cascada (20–30 cm)", desc: "Pasamuros en el extremo de la cama devuelve el agua limpia en cascada a las tilapias." }
+        ]
+      }
+    ]
+  }
+];
+
+const OFFICIAL_CROPS = [
+  { name: "Cilantro", germ: "7–10 días", harvest: "35–45 días", minDays: 35, maxDays: 45, notes: "Cosecha completa (o cortar a 2 cm). Nivel 1 Mecha / Nivel 2 NFT." },
+  { name: "Lechuga Crespa / Romana", germ: "3–5 días", harvest: "40–50 días", minDays: 40, maxDays: 50, notes: "Monitoreo continuo de hojas; proteger del sol fuerte de mediodía." },
+  { name: "Cebollín / Rama", germ: "7–10 días", harvest: "30–40 días", minDays: 30, maxDays: 40, notes: "Permite rebrotes sucesivos cortando solo las hojas verdes." },
+  { name: "Albahaca / Hierbabuena", germ: "5–8 días", harvest: "30+ días (Continua)", minDays: 30, maxDays: 45, notes: "Cosecha continua; podar puntas superiores para ramificar." },
+  { name: "Tomate Cherry / Pimentón", germ: "8–12 días", harvest: "70–90 días", minDays: 70, maxDays: 90, notes: "Requerimiento nutricional alto; requiere tutor en grava (Nivel 2.3 / 3)." }
+];
+
+const MAINTENANCE_ROUTINES = [
+  { id: "m1", freq: "Cada 3–5 días", task: "Revisar nivel de agua reposada 24h y funcionamiento de la bomba." },
+  { id: "m2", freq: "Cada 3 días (Nivel 2.2)", task: "Girar torre vertical 90° para uniformidad de luz." },
+  { id: "m3", freq: "Cada 15 días", task: "Enjuagar esponjas y filtros sin jabón + preparar semillero escalonado." },
+  { id: "m4", freq: "Al cosechar (30–45 días)", task: "Lavado general del sistema con agua y vinagre blanco." }
+];
+
+// ============================================================
+// 2. NAVEGACIÓN Y CATÁLOGO
+// ============================================================
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+  document.getElementById(`view-${tab}`).classList.add('active');
+}
+
+function toggleQuick(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+function renderCatalog() {
+  const container = document.getElementById('catalog-container');
+  container.innerHTML = LEVELS_DATA.map(lvl => `
+    <div class="level-block">
+      <div class="level-header">
+        <div class="level-title-wrap">
+          <span class="level-tag ${lvl.tagClass}">${lvl.badge}</span>
+          <h3>${lvl.title}</h3>
+        </div>
+        <span class="level-power">${lvl.power}</span>
+      </div>
+      <div class="cards-grid">
+        ${lvl.systems.map(sys => `
+          <article class="sys-card" onclick="openViewer('${sys.id}')">
+            <div class="sys-card-top">
+              <div class="sys-thumb">${sys.thumbSvg}</div>
+              <div>
+                <div class="sys-code">Modelo ${sys.id} • ${sys.power}</div>
+                <div class="sys-name">${sys.name}</div>
+              </div>
+            </div>
+            <div class="sys-specs">${sys.specs}</div>
+            <div class="sys-footer">
+              <span style="font-size:0.75rem; color:var(--muted); font-weight:700;">${sys.steps.length} pasos 3D</span>
+              <button class="btn-3d" type="button">🧊 Ver en 3D</button>
+            </div>
+          </article>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// 3. MOTOR DE VISOR 3D (THREE.JS + ORBITCONTROLS + ANIMACIÓN)
+// ============================================================
+let scene, camera, renderer, controls, animFrameId;
+let currentSystem = null;
+let currentStepIdx = 0;
+let sceneParts = {}; // Referencias de piezas animables
+let animTargets = []; // { obj, pos, rot, scale, opacity }
+let clock = new THREE.Clock();
+
+function initThree() {
+  const container = document.getElementById('three-container');
+  if (renderer) return;
+
+  scene = new THREE.Scene();
+  scene.background = null;
+
+  const w = container.clientWidth || 600;
+  const h = container.clientHeight || 420;
+
+  camera = new THREE.PerspectiveCamera(42, w / h, 0.1, 100);
+  camera.position.set(4.5, 3.6, 5.5);
+
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(w, h);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.07;
+  controls.enablePan = true;
+  controls.enableZoom = true;
+  controls.minDistance = 2;
+  controls.maxDistance = 18;
+  controls.target.set(0, 1.0, 0);
+
+  // Iluminación atmosférica suave
+  const hemiLight = new THREE.HemisphereLight(0xE0F2FE, 0x2B8A3E, 0.85);
+  hemiLight.position.set(0, 10, 0);
+  scene.add(hemiLight);
+
+  const dirLight = new THREE.DirectionalLight(0xFFFFFF, 0.95);
+  dirLight.position.set(5, 8, 6);
+  dirLight.castShadow = true;
+  dirLight.shadow.mapSize.width = 1024;
+  dirLight.shadow.mapSize.height = 1024;
+  dirLight.shadow.camera.near = 1;
+  dirLight.shadow.camera.far = 22;
+  scene.add(dirLight);
+
+  // Suelo receptor de sombras
+  const ground = new THREE.Mesh(
+    new THREE.CircleGeometry(6, 48),
+    new THREE.ShadowMaterial({ opacity: 0.16 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  ground.name = "PERMANENT_GROUND";
+  scene.add(ground);
+
+  const grid = new THREE.GridHelper(10, 20, 0x94A3B8, 0xCBD5E1);
+  grid.material.opacity = 0.25;
+  grid.material.transparent = true;
+  grid.name = "PERMANENT_GROUND";
+  scene.add(grid);
+
+  window.addEventListener('resize', onWindowResize);
+  animateThree();
+}
+
+function onWindowResize() {
+  if (!renderer) return;
+  const container = document.getElementById('three-container');
+  if (!container || !container.clientWidth) return;
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
+}
+
+function animateThree() {
+  animFrameId = requestAnimationFrame(animateThree);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const t = clock.elapsedTime;
+
+  // Interpolación física suave hacia los objetivos del paso actual
+  for (const item of animTargets) {
+    if (!item.obj) continue;
+    const speed = 6.5 * dt;
+    if (item.pos) item.obj.position.lerp(item.pos, speed);
+    if (item.rot) {
+      item.obj.rotation.x += (item.rot.x - item.obj.rotation.x) * speed;
+      item.obj.rotation.y += (item.rot.y - item.obj.rotation.y) * speed;
+      item.obj.rotation.z += (item.rot.z - item.obj.rotation.z) * speed;
+    }
+    if (item.scale) item.obj.scale.lerp(item.scale, speed);
+    if (item.opacity !== undefined && item.obj.material) {
+      item.obj.material.opacity += (item.opacity - item.obj.material.opacity) * speed;
+      item.obj.visible = item.obj.material.opacity > 0.03;
+    }
+  }
+
+  // Pequeña animación viva del agua o flujo si existe
+  if (sceneParts.waterPulse) {
+    sceneParts.waterPulse.position.y += Math.sin(t * 2.5) * 0.0006;
+  }
+  if (sceneParts.droplets) {
+    sceneParts.droplets.children.forEach((d, idx) => {
+      d.position.y -= dt * 1.4;
+      if (d.position.y < 0.2) d.position.y = 2.6 - (idx * 0.2);
+    });
+  }
+
+  if (controls) controls.update();
+  if (renderer && scene && camera) renderer.render(scene, camera);
+}
+
+function clearDynamicScene() {
+  const toRemove = [];
+  scene.children.forEach(c => {
+    if (c.type !== 'HemisphereLight' && c.type !== 'DirectionalLight' && c.name !== 'PERMANENT_GROUND') {
+      toRemove.push(c);
+    }
+  });
+  toRemove.forEach(c => scene.remove(c));
+  sceneParts = {};
+  animTargets = [];
+}
+
+// Materiales reutilizables
+function matPET(color = 0xE0F2FE, opacity = 0.42) {
+  return new THREE.MeshPhysicalMaterial({
+    color, transparent: true, opacity, roughness: 0.12, metalness: 0.05, side: THREE.DoubleSide
+  });
+}
+function matWater(opacity = 0.72) {
+  return new THREE.MeshPhysicalMaterial({
+    color: 0x38BDF8, transparent: true, opacity, roughness: 0.08, metalness: 0.05
+  });
+}
+function matSolid(color, roughness = 0.5) {
+  return new THREE.MeshStandardMaterial({ color, roughness, metalness: 0.08 });
+}
+
+function createPlantMesh(scale = 1) {
+  const g = new THREE.Group();
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.05, 0.45, 10), matSolid(0x2B8A3E));
+  stem.position.y = 0.22;
+  g.add(stem);
+
+  const leafGeo = new THREE.SphereGeometry(0.18, 12, 8);
+  leafGeo.scale(1.3, 0.35, 0.8);
+  for (let i = 0; i < 4; i++) {
+    const leaf = new THREE.Mesh(leafGeo, matSolid(i % 2 === 0 ? 0x74B816 : 0x2B8A3E));
+    const ang = (i * Math.PI) / 2;
+    leaf.position.set(Math.cos(ang) * 0.18, 0.38 + (i % 2) * 0.06, Math.sin(ang) * 0.18);
+    leaf.rotation.y = -ang;
+    leaf.rotation.z = 0.25;
+    leaf.castShadow = true;
+    g.add(leaf);
+  }
+  // Raíces
+  for (let r = 0; r < 3; r++) {
+    const root = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.006, 0.45, 6), matSolid(0xFEF3C7));
+    root.position.set((r - 1) * 0.06, -0.22, (r % 2) * 0.04);
+    root.rotation.z = (r - 1) * 0.15;
+    g.add(root);
+  }
+  g.scale.setScalar(scale);
+  return g;
+}
+
+function setTarget(obj, { pos, rot, scale, opacity }) {
+  if (!obj) return;
+  animTargets.push({
+    obj,
+    pos: pos ? new THREE.Vector3(...pos) : null,
+    rot: rot ? new THREE.Euler(...rot) : null,
+    scale: scale ? new THREE.Vector3(...scale) : null,
+    opacity
+  });
+}
+
+// ============================================================
+// CONSTRUCTORES 3D POR MODELO
+// ============================================================
+function buildModel3D(sysId) {
+  clearDynamicScene();
+
+  if (sysId === "1.1") {
+    // 1.1 Sistema de Mecha (Botella PET con corte a 1/3)
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.9, 28, 1, true), matPET());
+    base.position.set(0, 0.45, 0);
+    base.castShadow = true;
+    const baseFloor = new THREE.Mesh(new THREE.CircleGeometry(0.65, 28), matPET(0xBAE6FD, 0.55));
+    baseFloor.rotation.x = -Math.PI / 2;
+    baseFloor.position.y = -0.45;
+    base.add(baseFloor);
+    scene.add(base);
+
+    // Anillo punteado a 1/3
+    const ringGeo = new THREE.TorusGeometry(0.67, 0.02, 10, 36);
+    const ringMat = new THREE.MeshBasicMaterial({ color: 0xEF4444, transparent: true, opacity: 1 });
+    const cutRing = new THREE.Mesh(ringGeo, ringMat);
+    cutRing.rotation.x = Math.PI / 2;
+    cutRing.position.set(0, 0.9, 0);
+    scene.add(cutRing);
+
+    // Parte superior (embudo + cuello + tapa)
+    const topGroup = new THREE.Group();
+    const bodyTop = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 1.15, 28, 1, true), matPET());
+    bodyTop.position.y = 0.575;
+    const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.65, 0.5, 28, 1, true), matPET());
+    cone.position.y = 1.4;
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.14, 20), matSolid(0x115E24));
+    cap.position.y = 1.7;
+    topGroup.add(bodyTop, cone, cap);
+    topGroup.position.set(0, 0.9, 0);
+    scene.add(topGroup);
+
+    // Cordón de algodón (mecha)
+    const wickMat = new THREE.MeshStandardMaterial({ color: 0xFDE68A, transparent: true, opacity: 0 });
+    const wick = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.25, 12), wickMat);
+    wick.position.set(0, 0.65, 0);
+    scene.add(wick);
+
+    // Sustrato (fibra de coco)
+    const subMat = new THREE.MeshStandardMaterial({ color: 0x78350F, roughness: 0.9, transparent: true, opacity: 0 });
+    const substrate = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.22, 0.65, 24), subMat);
+    substrate.position.set(0, 1.15, 0);
+    scene.add(substrate);
+
+    // Agua nutritiva en base
+    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.61, 0.61, 0.6, 28), matWater(0));
+    water.position.set(0, 0.3, 0);
+    scene.add(water);
+
+    // Esponja + Plántula
+    const spongeMat = new THREE.MeshStandardMaterial({ color: 0xFACC15, transparent: true, opacity: 0 });
+    const sponge = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.22, 16), spongeMat);
+    sponge.position.set(0, 1.5, 0);
+    scene.add(sponge);
+
+    const plant = createPlantMesh(1.1);
+    plant.position.set(0, 2.2, 0);
+    plant.scale.setScalar(0.001);
+    scene.add(plant);
+
+    sceneParts = { base, cutRing, topGroup, wick, substrate, water, sponge, plant, waterPulse: water };
+  } else if (sysId === "1.2") {
+    // 1.2 Raíz Flotante
+    const tina = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.1, 1.8), matPET(0xCBD5E1, 0.45));
+    tina.position.set(0, 0.55, 0);
+    scene.add(tina);
+
+    const water = new THREE.Mesh(new THREE.BoxGeometry(2.48, 0.78, 1.68), matWater(0));
+    water.position.set(0, 0.4, 0);
+    scene.add(water);
+
+    const icoporMat = new THREE.MeshStandardMaterial({ color: 0xFFFFFF, roughness: 0.6, transparent: true, opacity: 0.95 });
+    const icopor = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.14, 1.6), icoporMat);
+    icopor.position.set(0, 1.5, 0);
+    scene.add(icopor);
+
+    const cups = [];
+    const plants = [];
+    [[-0.65, -0.35], [0.65, -0.35], [-0.65, 0.35], [0.65, 0.35]].forEach(([x, z]) => {
+      const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.13, 0.28, 16), matSolid(0x115E24));
+      cup.position.set(x, 1.8, z);
+      cup.scale.setScalar(0.001);
+      scene.add(cup);
+      cups.push(cup);
+
+      const pl = createPlantMesh(0.85);
+      pl.position.set(x, 1.9, z);
+      pl.scale.setScalar(0.001);
+      scene.add(pl);
+      plants.push(pl);
+    });
+    sceneParts = { tina, water, icopor, cups, plants, waterPulse: water };
+  } else if (sysId === "1.3") {
+    // 1.3 Sistema Kratky
+    const galon = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.8, 1.6, 24), matSolid(0x1E293B, 0.55));
+    galon.position.set(0, 0.8, 0);
+    galon.castShadow = true;
+    scene.add(galon);
+
+    // Corte visual frontal para ver nivel de agua y cámara de aire
+    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.85, 24), matWater(0));
+    water.position.set(0, 0.45, 0.12);
+    scene.add(water);
+
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.35, 16), matSolid(0x74B816));
+    cup.position.set(0, 2.0, 0);
+    cup.scale.setScalar(0.001);
+    scene.add(cup);
+
+    const plant = createPlantMesh(1.2);
+    plant.position.set(0, 2.2, 0);
+    plant.scale.setScalar(0.001);
+    scene.add(plant);
+
+    sceneParts = { galon, water, cup, plant, waterPulse: water };
+  } else if (sysId === "1.4") {
+    // 1.4 Columna Vertical
+    const bottles = [];
+    const plants = [];
+    for (let i = 0; i < 3; i++) {
+      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.95, 24, 1, true), matPET());
+      b.position.set((i - 1) * 1.1, 0.5, 0);
+      scene.add(b);
+      bottles.push(b);
+
+      const pl = createPlantMesh(0.8);
+      pl.position.set(0.35, 0.5 + i * 0.95, 0);
+      pl.rotation.z = -0.35;
+      pl.scale.setScalar(0.001);
+      scene.add(pl);
+      plants.push(pl);
+    }
+    const droplets = new THREE.Group();
+    for (let d = 0; d < 6; d++) {
+      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), matWater(0.85));
+      drop.position.set(0, 0.4 + d * 0.4, 0);
+      droplets.add(drop);
+    }
+    droplets.visible = false;
+    scene.add(droplets);
+    sceneParts = { bottles, plants, droplets };
+  } else if (sysId === "2.1") {
+    // 2.1 Tubos en Cascada NFT
+    const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 0.95, 24), matSolid(0x1E293B));
+    bucket.position.set(-1.5, 0.48, 0);
+    scene.add(bucket);
+
+    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.48, 0.65, 24), matWater(0.75));
+    water.position.set(-1.5, 0.35, 0);
+    scene.add(water);
+
+    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.24, 0.24), matSolid(0x38BDF8));
+    pump.position.set(-1.5, 0.15, 0);
+    pump.scale.setScalar(0.001);
+    scene.add(pump);
+
+    const tube1 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 3.2, 20), matSolid(0xF8FAFC));
+    tube1.rotation.z = Math.PI / 2 - 0.04;
+    tube1.position.set(0.2, 1.85, 0);
+    scene.add(tube1);
+
+    const tube2 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 3.2, 20), matSolid(0xF8FAFC));
+    tube2.rotation.z = Math.PI / 2 + 0.04;
+    tube2.position.set(0.2, 1.15, 0);
+    scene.add(tube2);
+
+    const plants = [];
+    [-0.9, -0.1, 0.7, 1.4].forEach((x, idx) => {
+      const pl = createPlantMesh(0.75);
+      pl.position.set(x, idx % 2 === 0 ? 2.02 : 1.32, 0);
+      pl.scale.setScalar(0.001);
+      scene.add(pl);
+      plants.push(pl);
+    });
+    sceneParts = { bucket, water, pump, tube1, tube2, plants, waterPulse: water };
+  } else if (sysId === "2.2") {
+    // 2.2 Torre Vertical Recirculante
+    const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.9, 24), matSolid(0x1E293B));
+    bucket.position.set(0, 0.45, 0);
+    scene.add(bucket);
+
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 2.4, 24), matSolid(0xE2E8F0));
+    tower.position.set(0, 1.65, 0);
+    scene.add(tower);
+
+    const hose = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.5, 10), matSolid(0x38BDF8));
+    hose.position.set(0, 1.65, 0);
+    hose.scale.setScalar(0.001);
+    scene.add(hose);
+
+    const plants = [];
+    for (let i = 0; i < 6; i++) {
+      const ang = (i * Math.PI) / 3;
+      const pl = createPlantMesh(0.72);
+      pl.position.set(Math.cos(ang) * 0.36, 1.1 + (i % 3) * 0.55, Math.sin(ang) * 0.36);
+      pl.rotation.z = -Math.cos(ang) * 0.45;
+      pl.rotation.x = Math.sin(ang) * 0.45;
+      pl.scale.setScalar(0.001);
+      scene.add(pl);
+      plants.push(pl);
+    }
+    const droplets = new THREE.Group();
+    for (let d = 0; d < 8; d++) {
+      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), matWater(0.85));
+      drop.position.set(Math.cos(d) * 0.18, 0.8 + d * 0.25, Math.sin(d) * 0.18);
+      droplets.add(drop);
+    }
+    droplets.visible = false;
+    scene.add(droplets);
+    sceneParts = { bucket, tower, hose, plants, droplets };
+  } else if (sysId === "2.3") {
+    // 2.3 Inundación y Drenaje
+    const bLow = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.95, 24), matPET(0x94A3B8, 0.5));
+    bLow.position.set(0, 0.48, 0);
+    scene.add(bLow);
+
+    const waterLow = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.58, 0.65, 24), matWater(0.75));
+    waterLow.position.set(0, 0.35, 0);
+    scene.add(waterLow);
+
+    const bTop = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.85, 24), matSolid(0x334155));
+    bTop.position.set(0, 1.45, 0);
+    scene.add(bTop);
+
+    const gravel = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.55, 24), matSolid(0x94A3B8, 0.9));
+    gravel.position.set(0, 1.5, 0);
+    scene.add(gravel);
+
+    const waterTop = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.66, 0.45, 24), matWater(0));
+    waterTop.position.set(0, 1.48, 0);
+    scene.add(waterTop);
+
+    const plant = createPlantMesh(1.25);
+    plant.position.set(0, 1.85, 0);
+    plant.scale.setScalar(0.001);
+    scene.add(plant);
+
+    sceneParts = { bLow, waterLow, bTop, gravel, waterTop, plant };
+  } else {
+    // 3.1 & 3.2 Acuaponía (Caneca 200L + Balde Filtro 20L + Cama 50L)
+    const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 1.15, 28), matPET(0x0284C7, 0.45));
+    tank.position.set(-1.3, 0.58, 0);
+    scene.add(tank);
+
+    const tankWater = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.9, 28), matWater(0.68));
+    tankWater.position.set(-1.3, 0.46, 0);
+    scene.add(tankWater);
+
+    // Peces simbólicos
+    const fish = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 8), matSolid(0xF97316));
+    fish.scale.set(1.5, 0.7, 0.6);
+    fish.position.set(-1.3, 0.45, 0.2);
+    scene.add(fish);
+
+    const filter = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.38, 0.85, 20), matSolid(0x64748B));
+    filter.position.set(0.15, 1.35, 0);
+    scene.add(filter);
+
+    const bed = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 1.0), matSolid(0x475569));
+    bed.position.set(1.35, 1.75, 0);
+    scene.add(bed);
+
+    const plants = [];
+    [0.95, 1.35, 1.75].forEach(x => {
+      const pl = createPlantMesh(0.85);
+      pl.position.set(x, 2.0, 0);
+      pl.scale.setScalar(0.001);
+      scene.add(pl);
+      plants.push(pl);
+    });
+
+    const droplets = new THREE.Group();
+    for (let d = 0; d < 5; d++) {
+      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), matWater(0.85));
+      drop.position.set(-0.6, 1.1 + d * 0.15, 0);
+      droplets.add(drop);
+    }
+    droplets.visible = false;
+    scene.add(droplets);
+
+    sceneParts = { tank, tankWater, fish, filter, bed, plants, droplets, waterPulse: tankWater };
+  }
+}
+
+function applyStepAnimation(sysId, stepIdx) {
+  animTargets = [];
+
+  if (sysId === "1.1") {
+    const { base, cutRing, topGroup, wick, substrate, water, sponge, plant } = sceneParts;
+    if (stepIdx === 0) {
+      // Paso 1: Botella entera con anillo punteado a 1/3
+      setTarget(base, { pos: [0, 0.45, 0] });
+      setTarget(cutRing, { pos: [0, 0.9, 0], opacity: 1 });
+      setTarget(topGroup, { pos: [0, 0.9, 0], rot: [0, 0, 0] });
+      setTarget(wick, { opacity: 0, pos: [0, 0.65, 0] });
+      setTarget(substrate, { opacity: 0, pos: [0, 1.15, 0] });
+      setTarget(water, { opacity: 0 });
+      setTarget(sponge, { opacity: 0, pos: [0, 1.5, 0] });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001], pos: [0, 2.2, 0] });
+    } else if (stepIdx === 1) {
+      // Paso 2: Corte a 1/3 y separación lateral
+      setTarget(cutRing, { opacity: 0.2 });
+      setTarget(topGroup, { pos: [1.55, 0.0, 0], rot: [0, 0, 0] });
+      setTarget(wick, { opacity: 0 });
+      setTarget(substrate, { opacity: 0 });
+      setTarget(water, { opacity: 0 });
+      setTarget(sponge, { opacity: 0 });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001] });
+    } else if (stepIdx === 2) {
+      // Paso 3: Perforación de tapa y paso del cordón de algodón
+      setTarget(cutRing, { opacity: 0 });
+      setTarget(topGroup, { pos: [1.55, 2.15, 0], rot: [Math.PI, 0, 0] });
+      setTarget(wick, { opacity: 1, pos: [1.55, 0.75, 0] });
+      setTarget(substrate, { opacity: 0 });
+      setTarget(water, { opacity: 0 });
+      setTarget(sponge, { opacity: 0 });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001] });
+    } else if (stepIdx === 3) {
+      // Paso 4: Inversión del embudo con sustrato y agua nutritiva en base
+      setTarget(topGroup, { pos: [0, 2.3, 0], rot: [Math.PI, 0, 0] });
+      setTarget(wick, { opacity: 1, pos: [0, 0.75, 0] });
+      setTarget(substrate, { opacity: 1, pos: [0, 1.25, 0] });
+      setTarget(water, { opacity: 0.72, pos: [0, 0.3, 0] });
+      setTarget(sponge, { opacity: 0 });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001] });
+    } else {
+      // Paso 5: Fijación de la plántula con esponja abrazando el tallo seco
+      setTarget(topGroup, { pos: [0, 2.3, 0], rot: [Math.PI, 0, 0] });
+      setTarget(wick, { opacity: 1, pos: [0, 0.75, 0] });
+      setTarget(substrate, { opacity: 1, pos: [0, 1.25, 0] });
+      setTarget(water, { opacity: 0.72, pos: [0, 0.3, 0] });
+      setTarget(sponge, { opacity: 1, pos: [0, 1.62, 0] });
+      setTarget(plant, { scale: [1.1, 1.1, 1.1], pos: [0, 1.68, 0] });
+    }
+  } else if (sysId === "1.2") {
+    const { water, icopor, cups, plants } = sceneParts;
+    if (stepIdx === 0) {
+      setTarget(icopor, { pos: [0, 1.5, 0] });
+      setTarget(water, { opacity: 0 });
+      cups.forEach(c => setTarget(c, { scale: [0.001, 0.001, 0.001] }));
+      plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
+    } else if (stepIdx === 1) {
+      setTarget(icopor, { pos: [0, 1.35, 0] });
+      cups.forEach(c => setTarget(c, { scale: [1, 1, 1], pos: [c.position.x, 1.32, c.position.z] }));
+      plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
+    } else if (stepIdx === 2) {
+      setTarget(icopor, { pos: [0, 1.35, 0] });
+      cups.forEach(c => setTarget(c, { scale: [1, 1, 1], pos: [c.position.x, 1.32, c.position.z] }));
+      plants.forEach(p => setTarget(p, { scale: [0.85, 0.85, 0.85], pos: [p.position.x, 1.45, p.position.z] }));
+    } else {
+      setTarget(water, { opacity: 0.72 });
+      setTarget(icopor, { pos: [0, 0.82, 0] });
+      cups.forEach(c => setTarget(c, { scale: [1, 1, 1], pos: [c.position.x, 0.78, c.position.z] }));
+      plants.forEach(p => setTarget(p, { scale: [0.85, 0.85, 0.85], pos: [p.position.x, 0.92, p.position.z] }));
+    }
+  } else if (sysId === "1.3") {
+    const { water, cup, plant } = sceneParts;
+    if (stepIdx === 0) {
+      setTarget(water, { opacity: 0 });
+      setTarget(cup, { scale: [0.001, 0.001, 0.001] });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001] });
+    } else if (stepIdx === 1) {
+      setTarget(water, { opacity: 0 });
+      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.62, 0] });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001] });
+    } else if (stepIdx === 2) {
+      setTarget(water, { opacity: 0.75 });
+      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.62, 0] });
+      setTarget(plant, { scale: [0.001, 0.001, 0.001] });
+    } else {
+      setTarget(water, { opacity: 0.75 });
+      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.62, 0] });
+      setTarget(plant, { scale: [1.15, 1.15, 1.15], pos: [0, 1.75, 0] });
+    }
+  } else if (sysId === "1.4") {
+    const { bottles, plants, droplets } = sceneParts;
+    if (stepIdx <= 1) {
+      bottles.forEach((b, i) => setTarget(b, { pos: [(i - 1) * 1.15, 0.5, 0] }));
+      plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
+      droplets.visible = false;
+    } else if (stepIdx === 2) {
+      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.5 + i * 0.92, 0] }));
+      plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
+      droplets.visible = false;
+    } else {
+      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.5 + i * 0.92, 0] }));
+      plants.forEach(p => setTarget(p, { scale: [0.8, 0.8, 0.8] }));
+      droplets.visible = true;
+    }
+  } else if (sysId === "2.1") {
+    const { pump, plants } = sceneParts;
+    setTarget(pump, { scale: stepIdx >= 1 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    plants.forEach(p => setTarget(p, { scale: stepIdx >= 2 ? [0.75, 0.75, 0.75] : [0.001, 0.001, 0.001] }));
+  } else if (sysId === "2.2") {
+    const { hose, plants, droplets } = sceneParts;
+    setTarget(hose, { scale: stepIdx >= 1 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    droplets.visible = stepIdx >= 2;
+    plants.forEach(p => setTarget(p, { scale: stepIdx >= 3 ? [0.72, 0.72, 0.72] : [0.001, 0.001, 0.001] }));
+  } else if (sysId === "2.3") {
+    const { waterTop, plant } = sceneParts;
+    setTarget(waterTop, { opacity: stepIdx === 1 ? 0.72 : 0 });
+    setTarget(plant, { scale: stepIdx >= 3 ? [1.2, 1.2, 1.2] : [0.001, 0.001, 0.001] });
+  } else {
+    const { plants, droplets } = sceneParts;
+    plants.forEach(p => setTarget(p, { scale: stepIdx >= 2 ? [0.85, 0.85, 0.85] : [0.001, 0.001, 0.001] }));
+    droplets.visible = stepIdx >= 3;
+  }
+}
+
+function findSystem(id) {
+  for (const lvl of LEVELS_DATA) {
+    const found = lvl.systems.find(s => s.id === id);
+    if (found) return { lvl, sys: found };
+  }
+  return null;
+}
+
+function openViewer(sysId) {
+  const res = findSystem(sysId);
+  if (!res) return;
+  currentSystem = res.sys;
+  currentStepIdx = 0;
+
+  document.getElementById('viewer-title').textContent = `${res.sys.id} ${res.sys.name}`;
+  document.getElementById('viewer-subtitle').textContent = `${res.lvl.badge} • ${res.sys.specs}`;
+  document.getElementById('viewer-meta').innerHTML = `<strong>☀ Luz:</strong> ${res.sys.luz}<br><strong>💧 Agua/Manejo:</strong> ${res.sys.agua}`;
+
+  document.getElementById('viewer-overlay').classList.add('open');
+  initThree();
+  setTimeout(onWindowResize, 50);
+  buildModel3D(sysId);
+  renderStepsUI();
+  applyStepAnimation(sysId, 0);
+  reframeCamera();
+}
+
+function closeViewer() {
+  document.getElementById('viewer-overlay').classList.remove('open');
+}
+
+function reframeCamera() {
+  if (!camera || !controls) return;
+  camera.position.set(4.5, 3.4, 5.4);
+  controls.target.set(0, 1.1, 0);
+  controls.update();
+}
+
+function renderStepsUI() {
+  const list = document.getElementById('viewer-steps-list');
+  list.innerHTML = currentSystem.steps.map((st, idx) => `
+    <div class="step-item ${idx === currentStepIdx ? 'active' : ''}" onclick="goToStep(${idx})">
+      <div class="step-num">${idx + 1}</div>
+      <div class="step-text">
+        <h4>${st.title}</h4>
+        <p>${st.desc}</p>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('step-counter').textContent = `Paso ${currentStepIdx + 1} / ${currentSystem.steps.length}`;
+  document.getElementById('btn-prev').disabled = currentStepIdx === 0;
+  document.getElementById('btn-next').disabled = currentStepIdx === currentSystem.steps.length - 1;
+}
+
+function goToStep(idx) {
+  currentStepIdx = idx;
+  renderStepsUI();
+  applyStepAnimation(currentSystem.id, idx);
+}
+
+function changeStep(delta) {
+  const next = currentStepIdx + delta;
+  if (next >= 0 && next < currentSystem.steps.length) {
+    goToStep(next);
+  }
+}
+
+// ============================================================
+// 4. MONITOREO Y PERSISTENCIA EN LOCALSTORAGE
+// ============================================================
+const LS_LOTS = "hidroponia_tb_lots_v1";
+const LS_CHECK = "hidroponia_tb_check_v1";
+const LS_HARVEST = "hidroponia_tb_harvest_v1";
+
+function loadData(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveData(key, val) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+
+function addDays(dateStr, days) {
+  const d = new Date(dateStr + "T12:00:00");
+  d.setDate(d.getDate() + days);
+  return d.toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function daysBetween(dateStr) {
+  const start = new Date(dateStr + "T00:00:00");
+  const now = new Date();
+  return Math.max(0, Math.floor((now - start) / 86400000));
+}
+
+function initMonitoreoUI() {
+  const today = new Date().toISOString().split("T")[0];
+  document.getElementById('lot-date').value = today;
+  document.getElementById('h-date').value = today;
+
+  const cropOpts = OFFICIAL_CROPS.map(c => `<option value="${c.name}">${c.name} (${c.harvest})</option>`).join('');
+  document.getElementById('lot-crop').innerHTML = cropOpts;
+  document.getElementById('h-crop').innerHTML = OFFICIAL_CROPS.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+  const sysOpts = LEVELS_DATA.flatMap(l => l.systems.map(s => `<option value="${s.id} ${s.name}">N${l.level} • ${s.id} ${s.name}</option>`)).join('');
+  document.getElementById('lot-system').innerHTML = sysOpts;
+
+  document.getElementById('official-crops-tbody').innerHTML = OFFICIAL_CROPS.map(c => `
+    <tr>
+      <td><strong>${c.name}</strong></td>
+      <td>${c.germ}</td>
+      <td>${c.harvest}</td>
+      <td>${c.notes}</td>
+    </tr>
+  `).join('');
+
+  renderLots();
+  renderChecklist();
+  renderHarvests();
+}
+
+function addLot(e) {
+  e.preventDefault();
+  const cropName = document.getElementById('lot-crop').value;
+  const system = document.getElementById('lot-system').value;
+  const startDate = document.getElementById('lot-date').value;
+  const alias = document.getElementById('lot-alias').value.trim();
+
+  const lots = loadData(LS_LOTS, []);
+  lots.unshift({
+    id: Date.now(),
+    cropName,
+    system,
+    startDate,
+    alias: alias || cropName,
+    transplanted: false
+  });
+  saveData(LS_LOTS, lots);
+  document.getElementById('lot-alias').value = "";
+  renderLots();
+}
+
+function toggleTransplant(id) {
+  const lots = loadData(LS_LOTS, []);
+  const lot = lots.find(l => l.id === id);
+  if (lot) lot.transplanted = !lot.transplanted;
+  saveData(LS_LOTS, lots);
+  renderLots();
+}
+
+function deleteLot(id) {
+  const lots = loadData(LS_LOTS, []).filter(l => l.id !== id);
+  saveData(LS_LOTS, lots);
+  renderLots();
+}
+
+function renderLots() {
+  const lots = loadData(LS_LOTS, []);
+  document.getElementById('lots-count').textContent = `${lots.length} activos`;
+  const container = document.getElementById('lots-list');
+
+  if (!lots.length) {
+    container.innerHTML = `<div class="empty-state">Aún no hay lotes activos. Registra tu primer semillero arriba.</div>`;
+    return;
+  }
+
+  container.innerHTML = lots.map(l => {
+    const crop = OFFICIAL_CROPS.find(c => c.name === l.cropName) || OFFICIAL_CROPS[0];
+    const elapsed = daysBetween(l.startDate);
+    const pct = Math.min(100, Math.round((elapsed / crop.maxDays) * 100));
+    const transMin = addDays(l.startDate, 7);
+    const transMax = addDays(l.startDate, 12);
+    const harvMin = addDays(l.startDate, crop.minDays);
+    const harvMax = addDays(l.startDate, crop.maxDays);
+
+    return `
+      <div class="lot-card">
+        <div class="lot-head">
+          <div>
+            <strong style="color:var(--forest); font-size:0.95rem;">${l.alias}</strong>
+            <div style="font-size:0.78rem; color:var(--muted);">${l.cropName} • ${l.system}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-sm-ok" onclick="toggleTransplant(${l.id})">${l.transplanted ? '✔ Trasplantado' : 'Marcar trasplante'}</button>
+            <button class="btn-sm-danger" onclick="deleteLot(${l.id})">✕</button>
+          </div>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="lot-dates">
+          <div><strong>Inicio:</strong><br>${addDays(l.startDate, 0)} (Día ${elapsed})</div>
+          <div><strong>Trasplante (7–12d):</strong><br>${transMin} – ${transMax}</div>
+          <div><strong>Cosecha Est.:</strong><br>${harvMin} – ${harvMax}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function toggleCheck(id) {
+  const state = loadData(LS_CHECK, {});
+  state[id] = !state[id];
+  saveData(LS_CHECK, state);
+  renderChecklist();
+}
+
+function resetChecklist() {
+  saveData(LS_CHECK, {});
+  renderChecklist();
+}
+
+function renderChecklist() {
+  const state = loadData(LS_CHECK, {});
+  document.getElementById('checklist-container').innerHTML = MAINTENANCE_ROUTINES.map(r => {
+    const done = !!state[r.id];
+    return `
+      <label class="checklist-item ${done ? 'done' : ''}">
+        <input type="checkbox" ${done ? 'checked' : ''} onchange="toggleCheck('${r.id}')">
+        <div>
+          <strong style="font-size:0.8rem; color:var(--forest); display:block;">${r.freq}</strong>
+          <span style="font-size:0.8rem; color:var(--charcoal);">${r.task}</span>
+        </div>
+      </label>
+    `;
+  }).join('');
+}
+
+function addHarvest(e) {
+  e.preventDefault();
+  const crop = document.getElementById('h-crop').value;
+  const date = document.getElementById('h-date').value;
+  const qty = parseFloat(document.getElementById('h-qty').value);
+  const unit = document.getElementById('h-unit').value;
+  const dest = document.getElementById('h-dest').value;
+
+  const list = loadData(LS_HARVEST, []);
+  list.unshift({ id: Date.now(), crop, date, qty, unit, dest });
+  saveData(LS_HARVEST, list);
+  document.getElementById('h-qty').value = "";
+  renderHarvests();
+}
+
+function deleteHarvest(id) {
+  const list = loadData(LS_HARVEST, []).filter(h => h.id !== id);
+  saveData(LS_HARVEST, list);
+  renderHarvests();
+}
+
+function renderHarvests() {
+  const list = loadData(LS_HARVEST, []);
+  const totalKg = list.filter(h => h.unit === 'kg').reduce((a, b) => a + b.qty, 0);
+  const totalUd = list.filter(h => h.unit === 'unidades').reduce((a, b) => a + b.qty, 0);
+
+  document.getElementById('kpi-total').textContent = list.length;
+  document.getElementById('kpi-kg').textContent = `${totalKg.toFixed(1)} kg`;
+  document.getElementById('kpi-units').textContent = `${Math.round(totalUd)} ud`;
+
+  const el = document.getElementById('harvest-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty-state">Sin cosechas registradas todavía.</div>`;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Fecha</th><th>Cultivo</th><th>Cant.</th><th>Destino</th><th></th></tr>
+        </thead>
+        <tbody>
+          ${list.map(h => `
+            <tr>
+              <td>${h.date}</td>
+              <td><strong>${h.crop}</strong></td>
+              <td>${h.qty} ${h.unit}</td>
+              <td><span class="pill ${h.dest.includes('Venta') ? 'pill-lime' : 'pill-water'}">${h.dest}</span></td>
+              <td><button class="btn-sm-danger" onclick="deleteHarvest(${h.id})">✕</button></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+renderCatalog();
+initMonitoreoUI();
+</script>
+</body>
+</html>
