@@ -1175,10 +1175,11 @@ const LEVELS_DATA = [
         agua: "Revisa cada 5 a 7 días. Riega arriba hasta que gotee piso a piso.",
         thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="24" y="8" width="16" height="15" rx="3" fill="#E0F2FE" stroke="#115E24" stroke-width="1.8"/><rect x="24" y="25" width="16" height="15" rx="3" fill="#E0F2FE" stroke="#115E24" stroke-width="1.8"/><rect x="24" y="42" width="16" height="15" rx="3" fill="#E0F2FE" stroke="#115E24" stroke-width="1.8"/><circle cx="20" cy="15" r="3.5" fill="#74B816"/><circle cx="44" cy="32" r="3.5" fill="#74B816"/><circle cx="20" cy="49" r="3.5" fill="#74B816"/></svg>`,
         steps: [
-          { title: "Corte de ventanas laterales", desc: "Abre una ventana rectangular en el centro de cada una de las 3 botellas PET." },
-          { title: "Tapas con orificio de 2 mm", desc: "Haz un hoyo de 2 mm en la tapa de las botellas 1 y 2 para el goteo controlado." },
-          { title: "Apilar en torre", desc: "Encaja el pico de la botella superior en la base de la inferior y fija con alambre." },
-          { title: "Riego en cascada y plántulas", desc: "Vierte agua nutritiva arriba y fija cada plántula con esponja en su ventana." }
+          { title: "1. Corte de ventanas laterales", desc: "Marca y recorta una ventana rectangular en el costado de cada una de las 3 botellas PET." },
+          { title: "2. Tapas con orificio de 2 mm", desc: "Perfora un hoyo de 2 mm en la tapa de las botellas superiores para controlar el goteo." },
+          { title: "3. Apilar en torre", desc: "Invierte y encaja el pico de cada botella en la base de la inferior, fijando con alambre." },
+          { title: "4. Fijar plántulas en ventanas", desc: "Abraza cada tallo seco con tira de esponja y encájalo en su ventana lateral." },
+          { title: "5. Riego en cascada", desc: "Vierte agua nutritiva arriba; gotea piso a piso por los orificios mojando todas las raíces." }
         ]
       }
     ]
@@ -1194,6 +1195,7 @@ const LEVELS_DATA = [
         id: "2.1",
         name: "Tubos en Cascada (NFT Casero)",
         specs: "Tubos PVC 3\" o 4\" con pendiente 2–3% • Codos PVC • Balde 20L • Bomba 300–500 L/h",
+        bomba: "Bomba sumergible de pecera 300–500 L/h (~5W, silenciosa, elevación 0.6–0.8 m).",
         power: "5W",
         luz: "5 a 6 h de sol directo suave o luz indirecta abundante.",
         agua: "Bomba continua de día o 15 min ON / 15 min OFF. Limpiar balde cada 7 días.",
@@ -1209,21 +1211,24 @@ const LEVELS_DATA = [
         id: "2.2",
         name: "Torre Vertical Recirculante",
         specs: "Tubo PVC 4\" o 6\" (1.5m) con bolsillos al calor • Balde 20L • Bomba 600–800 L/h",
-        power: "5W",
+        bomba: "Bomba sumergible de pecera de mayor presión: 600–800 L/h (~8–12W, capaz de elevar 1.5–1.8 m).",
+        power: "8–12W",
         luz: "Girar la torre 90° cada 3 días para uniformidad de luz.",
         agua: "Timer 15 min ON / 15 min OFF. Lluvia interna baña raíces suspendidas.",
         thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="25" y="10" width="14" height="34" rx="2" fill="#E2E8F0" stroke="#115E24" stroke-width="2"/><rect x="18" y="44" width="28" height="14" rx="3" fill="#38BDF8" stroke="#115E24" stroke-width="2"/><circle cx="21" cy="18" r="3.5" fill="#74B816"/><circle cx="43" cy="25" r="3.5" fill="#74B816"/><circle cx="21" cy="33" r="3.5" fill="#74B816"/></svg>`,
         steps: [
-          { title: "Bolsillos al calor a 45°", desc: "Haz ranuras de 8 cm en el PVC 4\"–6\", calienta y empuja hacia adentro a 45°." },
-          { title: "Manguera central y regadera", desc: "Sube manguera desde la bomba en el balde hasta la cima con tapón perforado." },
-          { title: "Lluvia interna aeropónica", desc: "El agua cae en ducha por las paredes internas bañando las raíces al aire libre." },
-          { title: "Instalar plántulas", desc: "Encaja esponja abrazando el tallo en cada bolsillo; gira 90° cada 3 días." }
+          { title: "1. Cortar ranuras de 8 cm en el PVC", desc: "Marca y corta ranuras horizontales de 8 cm cada 20 cm en espiral alrededor del tubo PVC 4\"–6\"." },
+          { title: "2. Moldear bolsillos al calor (45°)", desc: "Calienta el borde superior de cada ranura con pistola de calor o vela y empuja hacia adentro a 45° con una botella de vidrio como molde." },
+          { title: "3. Instalar bomba 600–800 L/h (8–12W)", desc: "Coloca una bomba de pecera con mayor altura de elevación (mín. 1.5–1.8 m) en el balde base y sube la manguera hasta la cima." },
+          { title: "4. Tapón regadera y lluvia interna", desc: "Sella arriba con tapón perforado tipo ducha para que el agua bañe las raíces suspendidas en el aire." },
+          { title: "5. Fijar plántulas y rotar 90°", desc: "Encaja cada plántula con esponja abrazando el tallo seco en su bolsillo; gira la torre 90° cada 3 días." }
         ]
       },
       {
         id: "2.3",
         name: "Inundación y Drenaje (2 Baldes)",
         specs: "2 baldes 20L apilados • Grava de río lavada • Tubo rebose • Timer (15m ON / 105m OFF)",
+        bomba: "Bomba sumergible de pecera 300–500 L/h (~5W) conectada a timer analógico (15 min ON / 105 min OFF).",
         power: "5W",
         luz: "Ideal para albahaca, hierbabuena y tomate cherry con tutor.",
         agua: "Timer: 15 min encendido cada 2 horas de día (105 min OFF). Revisar nivel cada 4 días.",
@@ -1246,32 +1251,20 @@ const LEVELS_DATA = [
     systems: [
       {
         id: "3.1",
-        name: "Ciclo Biológico Cerrado (Tilapias)",
-        specs: "Tilapias (10–15 alevinos/100L) → Filtro Bio → Cama de Cultivo → Retorno en Cascada",
-        power: "5–10W",
-        luz: "Pellets 2 veces/día (solo lo que coman en 5 min). ¡Prohibido químicos o pesticidas!",
-        agua: "Caída en cascada continua para inyectar oxígeno disuelto a los peces.",
-        thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><circle cx="32" cy="32" r="22" fill="none" stroke="#38BDF8" stroke-width="4" stroke-dasharray="10 5"/><path d="M22 36c6-6 14-6 20 0-6 6-14 6-20 0z" fill="#F97316"/><path d="M30 14c-4-6-8-2-4 2M30 14c4-6 8-2 4 2" fill="#74B816"/></svg>`,
-        steps: [
-          { title: "Tanque de Tilapias (10–15/100L)", desc: "Los peces generan desechos orgánicos en el agua. Alimentar 2 veces/día (regla 5 min)." },
-          { title: "Filtro Biológico (Bacterias)", desc: "Bacterias benéficas transforman el amonio de los peces en nitratos asimilables." },
-          { title: "Cama de Cultivo (Hortalizas)", desc: "Las plantas absorben los nitratos como alimento natural y purifican el agua." },
-          { title: "Retorno en Cascada Oxigenante", desc: "El agua limpia cae al tanque inyectando oxígeno. ¡PROHIBIDO usar químicos!" }
-        ]
-      },
-      {
-        id: "3.2",
-        name: "Montaje Casero de 3 Piezas",
-        specs: "Caneca 200L + Balde Filtro 20L + Cama 50L accionados por gravedad • Bomba 600–800 L/h",
-        power: "5–10W",
-        luz: "Alimentar peces 2 veces/día. Enjuagar esponja del filtro cada 15 días sin jabón.",
-        agua: "Una sola bomba sube agua al filtro; el resto del circuito fluye 100% por gravedad.",
+        name: "Sistema Acuapónico Integral (Ciclo + 3 Piezas)",
+        specs: "Caneca 200L + Balde Filtro 20L + Cama 50L • Tilapias (10–15/100L) • Bomba 600–800 L/h",
+        bomba: "Bomba sumergible continua 24/7 de 600–800 L/h (o 1000 L/h) con rejilla/pre-filtro para proteger alevinos y evitar taponamientos.",
+        power: "8–15W",
+        luz: "Pellets 2 veces/día (solo lo que coman en 5 min). ¡PROHIBIDO usar químicos o pesticidas!",
+        agua: "Una sola bomba sube agua al filtro; el resto fluye 100% por gravedad y regresa en cascada oxigenante.",
         thumbSvg: `<svg viewBox="0 0 64 64" width="48" height="48"><rect x="8" y="34" width="18" height="22" rx="2" fill="#38BDF8" stroke="#115E24" stroke-width="1.8"/><rect x="26" y="20" width="14" height="18" rx="2" fill="#94A3B8" stroke="#115E24" stroke-width="1.8"/><rect x="40" y="14" width="18" height="14" rx="2" fill="#74B816" stroke="#115E24" stroke-width="1.8"/></svg>`,
         steps: [
-          { title: "Nivelar 3 piezas por gravedad", desc: "Caneca 200L en el suelo, cama 50L más alta sobre soporte y balde filtro 20L a un costado." },
-          { title: "Impulsión al filtro", desc: "Bomba sumergible en la caneca sube agua con heces directo a la base del balde filtro." },
-          { title: "Paso a la cama de cultivo", desc: "El agua atraviesa esponja y grava volcánica y desborda hacia la cama de hortalizas." },
-          { title: "Retorno en cascada (20–30 cm)", desc: "Pasamuros en el extremo de la cama devuelve el agua limpia en cascada a las tilapias." }
+          { title: "1. Montar tanque base (Caneca 150–200L)", desc: "Ubica la caneca en el suelo sobre superficie firme y nivelada; será la base del circuito." },
+          { title: "2. Llenar agua e introducir tilapias", desc: "Llena con agua reposada 24h sin cloro y siembra 10–15 alevinos/100L (generan amonio natural)." },
+          { title: "3. Instalar bomba continua (600–800 L/h)", desc: "Coloca la bomba sumergible con rejilla protectora en el fondo y sube la manguera hacia el filtro." },
+          { title: "4. Conectar balde filtro bio-mecánico (20L)", desc: "Esponja abajo retiene sólidos y grava volcánica arriba aloja bacterias que convierten amonio en nitratos." },
+          { title: "5. Montar cama de cultivo superior (50L)", desc: "Recibe el agua por tubo de rebose desde el filtro; las raíces absorben nitratos y purifican el agua." },
+          { title: "6. Lámina y cascada de retorno (20–30 cm)", desc: "El pasamuros de salida devuelve el agua limpia en chorro/cascada oxigenando el tanque de tilapias." }
         ]
       }
     ]
@@ -1446,6 +1439,16 @@ function animateThree() {
   // Pequeña animación viva del agua o flujo si existe
   if (sceneParts.waterPulse) {
     sceneParts.waterPulse.position.y += Math.sin(t * 2.5) * 0.0006;
+  }
+  if (sceneParts.fishes && sceneParts.fishes.length) {
+    sceneParts.fishes.forEach((f, idx) => {
+      if (f.scale.x > 0.1) {
+        const ang = t * 1.1 + idx * 2.1;
+        f.position.x = -1.3 + Math.cos(ang) * 0.34;
+        f.position.z = Math.sin(ang) * 0.34;
+        f.rotation.y = -ang;
+      }
+    });
   }
   if (sceneParts.droplets) {
     sceneParts.droplets.children.forEach((d, idx) => {
@@ -1622,40 +1625,75 @@ function buildModel3D(sysId) {
     });
     sceneParts = { tina, water, icopor, cups, plants, waterPulse: water };
   } else if (sysId === "1.3") {
-    // 1.3 Sistema Kratky
-    const galon = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.8, 1.6, 24), matSolid(0x1E293B, 0.55));
-    galon.position.set(0, 0.8, 0);
-    galon.castShadow = true;
+    // 1.3 Sistema Kratky (Galón oscuro translúcido para ver cámara de aire y nivel bajando)
+    const galon = new THREE.Mesh(new THREE.CylinderGeometry(0.74, 0.8, 1.55, 24, 1, true), matPET(0x1E293B, 0.52));
+    galon.position.set(0, 0.78, 0);
     scene.add(galon);
 
-    // Corte visual frontal para ver nivel de agua y cámara de aire
-    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, 0.85, 24), matWater(0));
-    water.position.set(0, 0.45, 0.12);
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.74, 0.28, 24, 1, true), matPET(0x1E293B, 0.58));
+    neck.position.set(0, 1.68, 0);
+    scene.add(neck);
+
+    const maxRing = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.022, 8, 28), matSolid(0x38BDF8));
+    maxRing.rotation.x = Math.PI / 2;
+    maxRing.position.set(0, 1.4, 0);
+    maxRing.visible = false;
+    scene.add(maxRing);
+
+    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.72, 1.28, 24), matWater(0));
+    water.position.set(0, 0.72, 0);
     scene.add(water);
 
-    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.35, 16), matSolid(0x74B816));
-    cup.position.set(0, 2.0, 0);
+    const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.18, 0.36, 16), matSolid(0x74B816));
+    cup.position.set(0, 2.1, 0);
     cup.scale.setScalar(0.001);
     scene.add(cup);
 
-    const plant = createPlantMesh(1.2);
-    plant.position.set(0, 2.2, 0);
+    const sponge = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.16, 14), matSolid(0xFACC15));
+    sponge.position.set(0, 1.82, 0);
+    sponge.scale.setScalar(0.001);
+    scene.add(sponge);
+
+    const plant = createPlantMesh(1.3);
+    plant.position.set(0, 1.86, 0);
     plant.scale.setScalar(0.001);
     scene.add(plant);
 
-    sceneParts = { galon, water, cup, plant, waterPulse: water };
+    sceneParts = { galon, neck, maxRing, water, cup, sponge, plant, waterPulse: water };
   } else if (sysId === "1.4") {
-    // 1.4 Columna Vertical
+    // 1.4 Columna Vertical (3 botellas PET reales con ventana lateral + tapa perforada 2mm)
     const bottles = [];
     const plants = [];
+    const holes = [];
+    const winFrames = [];
     for (let i = 0; i < 3; i++) {
-      const b = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.95, 24, 1, true), matPET());
-      b.position.set((i - 1) * 1.1, 0.5, 0);
-      scene.add(b);
-      bottles.push(b);
+      const grp = new THREE.Group();
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 0.72, 24, 1, true), matPET(0xE0F2FE, 0.42));
+      grp.add(body);
+      const shoulder = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.36, 0.24, 24, 1, true), matPET(0xE0F2FE, 0.42));
+      shoulder.position.y = 0.48;
+      grp.add(shoulder);
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.1, 16), matSolid(0x2B8A3E));
+      cap.position.y = 0.64;
+      grp.add(cap);
+      const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.12, 10), matSolid(0x0F172A));
+      hole.position.y = 0.65;
+      hole.scale.setScalar(0.001);
+      grp.add(hole);
+      holes.push(hole);
 
-      const pl = createPlantMesh(0.8);
-      pl.position.set(0.35, 0.5 + i * 0.95, 0);
+      // Guía roja del corte lateral (solo visible en Paso 1)
+      const winFrame = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.34, 0.28), matPET(0xEF4444, 0.65));
+      winFrame.position.set(0.36, 0.0, 0);
+      grp.add(winFrame);
+      winFrames.push(winFrame);
+
+      grp.position.set((i - 1) * 1.1, 0.55, 0);
+      scene.add(grp);
+      bottles.push(grp);
+
+      const pl = createPlantMesh(0.78);
+      pl.position.set(0.38, 0.55 + i * 0.92, 0);
       pl.rotation.z = -0.35;
       pl.scale.setScalar(0.001);
       scene.add(pl);
@@ -1663,59 +1701,107 @@ function buildModel3D(sysId) {
     }
     const droplets = new THREE.Group();
     for (let d = 0; d < 6; d++) {
-      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), matWater(0.85));
-      drop.position.set(0, 0.4 + d * 0.4, 0);
+      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), matWater(0.9));
+      drop.position.set(0, 0.35 + d * 0.42, 0);
       droplets.add(drop);
     }
     droplets.visible = false;
     scene.add(droplets);
-    sceneParts = { bottles, plants, droplets };
+    sceneParts = { bottles, holes, winFrames, plants, droplets };
   } else if (sysId === "2.1") {
-    // 2.1 Tubos en Cascada NFT
-    const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 0.95, 24), matSolid(0x1E293B));
-    bucket.position.set(-1.5, 0.48, 0);
+    // 2.1 Tubos en Cascada NFT (acueducto realista sin cruces)
+    const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.5, 0.95, 24), matPET(0xCBD5E1, 0.35));
+    bucket.position.set(-1.7, 0.48, 0);
     scene.add(bucket);
 
-    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.48, 0.65, 24), matWater(0.75));
-    water.position.set(-1.5, 0.35, 0);
+    const water = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.48, 0.62, 24), matWater(0.72));
+    water.position.set(-1.7, 0.33, 0);
     scene.add(water);
 
-    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.24, 0.24), matSolid(0x38BDF8));
-    pump.position.set(-1.5, 0.15, 0);
+    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.24, 0.24), matSolid(0xF59E0B));
+    pump.position.set(-1.75, 0.16, 0);
     pump.scale.setScalar(0.001);
     scene.add(pump);
 
-    const tube1 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 3.2, 20), matSolid(0xF8FAFC));
-    tube1.rotation.z = Math.PI / 2 - 0.04;
-    tube1.position.set(0.2, 1.85, 0);
+    // Manguera sube por fuera a la izquierda y entra a la tapa izquierda del tubo 1
+    const riserGroup = new THREE.Group();
+    const riserVert = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.85, 10), matWater(0.9));
+    riserVert.position.set(-1.75, 1.08, 0.12);
+    riserGroup.add(riserVert);
+    const riserTop = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.65, 10), matWater(0.9));
+    riserTop.rotation.z = Math.PI / 2;
+    riserTop.position.set(-1.42, 2.0, 0.06);
+    riserGroup.add(riserTop);
+    riserGroup.scale.setScalar(0.001);
+    scene.add(riserGroup);
+
+    const tube1 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 2.8, 20), matPET(0xF8FAFC, 0.72));
+    tube1.rotation.z = Math.PI / 2 - 0.05;
+    tube1.position.set(0.3, 1.92, 0);
     scene.add(tube1);
 
-    const tube2 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 3.2, 20), matSolid(0xF8FAFC));
-    tube2.rotation.z = Math.PI / 2 + 0.04;
-    tube2.position.set(0.2, 1.15, 0);
+    const elbowPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.72, 12), matSolid(0xCBD5E1));
+    elbowPipe.position.set(1.65, 1.54, 0);
+    scene.add(elbowPipe);
+
+    const tube2 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 2.8, 20), matPET(0xF8FAFC, 0.72));
+    tube2.rotation.z = Math.PI / 2 + 0.05;
+    tube2.position.set(0.3, 1.22, 0);
     scene.add(tube2);
 
+    // Boquilla de desagüe al balde desde el extremo izquierdo de tube2
+    const drainNozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.45, 10), matSolid(0xCBD5E1));
+    drainNozzle.rotation.z = Math.PI / 2;
+    drainNozzle.position.set(-1.28, 1.15, 0);
+    scene.add(drainNozzle);
+
+    const returnStream = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.045, 0.55, 10), matWater(0.88));
+    returnStream.position.set(-1.5, 0.88, 0);
+    returnStream.visible = false;
+    scene.add(returnStream);
+
     const plants = [];
-    [-0.9, -0.1, 0.7, 1.4].forEach((x, idx) => {
+    [-0.7, 0.0, 0.7, 1.35].forEach((x, idx) => {
       const pl = createPlantMesh(0.75);
-      pl.position.set(x, idx % 2 === 0 ? 2.02 : 1.32, 0);
+      pl.position.set(x, idx % 2 === 0 ? 2.08 : 1.38, 0);
       pl.scale.setScalar(0.001);
       scene.add(pl);
       plants.push(pl);
     });
-    sceneParts = { bucket, water, pump, tube1, tube2, plants, waterPulse: water };
+    sceneParts = { bucket, water, pump, riserHose: riserGroup, tube1, elbowPipe, tube2, drainNozzle, returnStream, plants, waterPulse: water };
   } else if (sysId === "2.2") {
     // 2.2 Torre Vertical Recirculante
-    const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.9, 24), matSolid(0x1E293B));
+    const bucket = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.9, 24), matPET(0xCBD5E1, 0.32));
     bucket.position.set(0, 0.45, 0);
     scene.add(bucket);
 
-    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 2.4, 24), matSolid(0xE2E8F0));
+    const waterBase = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.56, 0.6, 24), matWater(0.55));
+    waterBase.position.set(0, 0.32, 0);
+    scene.add(waterBase);
+
+    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.26, 0.26), matSolid(0xF59E0B));
+    pump.position.set(0, 0.18, 0);
+    pump.scale.setScalar(0.001);
+    scene.add(pump);
+
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 2.4, 24), matPET(0xE2E8F0, 0.45));
     tower.position.set(0, 1.65, 0);
     scene.add(tower);
 
-    const hose = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.5, 10), matSolid(0x38BDF8));
-    hose.position.set(0, 1.65, 0);
+    const pockets = new THREE.Group();
+    for (let i = 0; i < 6; i++) {
+      const ang = (i * Math.PI) / 3;
+      const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.08, 0.2, 12), matSolid(0x94A3B8));
+      cup.position.set(Math.cos(ang) * 0.32, 1.05 + (i % 3) * 0.55, Math.sin(ang) * 0.32);
+      cup.rotation.z = -Math.cos(ang) * 0.7;
+      cup.rotation.x = Math.sin(ang) * 0.7;
+      pockets.add(cup);
+    }
+    pockets.scale.setScalar(0.001);
+    scene.add(pockets);
+
+    const hose = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 2.6, 10), matWater(0.9));
+    hose.position.set(0, 1.55, 0);
     hose.scale.setScalar(0.001);
     scene.add(hose);
 
@@ -1738,57 +1824,92 @@ function buildModel3D(sysId) {
     }
     droplets.visible = false;
     scene.add(droplets);
-    sceneParts = { bucket, tower, hose, plants, droplets };
+    sceneParts = { bucket, waterBase, pump, tower, pockets, hose, plants, droplets, waterPulse: waterBase };
   } else if (sysId === "2.3") {
-    // 2.3 Inundación y Drenaje
-    const bLow = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.95, 24), matPET(0x94A3B8, 0.5));
+    // 2.3 Inundación y Drenaje (capas bien diferenciadas)
+    const bLow = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.64, 0.95, 24), matPET(0x93C5FD, 0.32));
     bLow.position.set(0, 0.48, 0);
     scene.add(bLow);
 
-    const waterLow = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.58, 0.65, 24), matWater(0.75));
-    waterLow.position.set(0, 0.35, 0);
+    const waterLow = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.58, 0.62, 24), matWater(0.68));
+    waterLow.position.set(0, 0.33, 0);
     scene.add(waterLow);
 
-    const bTop = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.62, 0.85, 24), matSolid(0x334155));
-    bTop.position.set(0, 1.45, 0);
-    scene.add(bTop);
+    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.22, 0.22), matSolid(0xF59E0B));
+    pump.position.set(-0.22, 0.16, 0);
+    scene.add(pump);
 
-    const gravel = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.65, 0.55, 24), matSolid(0x94A3B8, 0.9));
-    gravel.position.set(0, 1.5, 0);
-    scene.add(gravel);
+    const riser = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.15, 10), matWater(0.9));
+    riser.position.set(-0.22, 0.75, 0);
+    scene.add(riser);
 
-    const waterTop = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.66, 0.45, 24), matWater(0));
-    waterTop.position.set(0, 1.48, 0);
+    const topGroup = new THREE.Group();
+    const bTop = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.64, 0.85, 24), matPET(0xCBD5E1, 0.35));
+    topGroup.add(bTop);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.72, 0.03, 10, 28), matSolid(0x115E24));
+    rim.rotation.x = Math.PI / 2;
+    rim.position.y = 0.42;
+    topGroup.add(rim);
+    const gravel = new THREE.Mesh(new THREE.CylinderGeometry(0.65, 0.59, 0.52, 24), matSolid(0x78716C, 0.95));
+    gravel.position.y = -0.1;
+    topGroup.add(gravel);
+    const overflowPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.72, 10), matSolid(0xE2E8F0));
+    overflowPipe.position.set(0.32, -0.1, 0);
+    topGroup.add(overflowPipe);
+    topGroup.position.set(0, 1.5, 0);
+    scene.add(topGroup);
+
+    const waterTop = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.6, 0.48, 24), matWater(0));
+    waterTop.position.set(0, 1.42, 0);
     scene.add(waterTop);
 
     const plant = createPlantMesh(1.25);
-    plant.position.set(0, 1.85, 0);
+    plant.position.set(0, 1.72, 0);
     plant.scale.setScalar(0.001);
     scene.add(plant);
 
-    sceneParts = { bLow, waterLow, bTop, gravel, waterTop, plant };
+    sceneParts = { bLow, waterLow, pump, riser, topGroup, waterTop, plant };
   } else {
-    // 3.1 & 3.2 Acuaponía (Caneca 200L + Balde Filtro 20L + Cama 50L)
+    // 3.1 & 3.2 Acuaponía (Caneca 200L + Bomba + Balde Filtro 20L + Cama 50L)
     const tank = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.85, 1.15, 28), matPET(0x0284C7, 0.45));
     tank.position.set(-1.3, 0.58, 0);
     scene.add(tank);
 
-    const tankWater = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.9, 28), matWater(0.68));
+    const tankWater = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 0.9, 28), matWater(0));
     tankWater.position.set(-1.3, 0.46, 0);
     scene.add(tankWater);
 
-    // Peces simbólicos
-    const fish = new THREE.Mesh(new THREE.SphereGeometry(0.14, 12, 8), matSolid(0xF97316));
-    fish.scale.set(1.5, 0.7, 0.6);
-    fish.position.set(-1.3, 0.45, 0.2);
-    scene.add(fish);
+    // Tilapias nadando
+    const fishes = [];
+    for (let f = 0; f < 3; f++) {
+      const fish = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), matSolid(0xF97316));
+      fish.scale.set(1.6, 0.7, 0.55);
+      fish.position.set(-1.3 + Math.cos(f * 2.1) * 0.32, 0.38 + f * 0.14, Math.sin(f * 2.1) * 0.32);
+      fish.scale.multiplyScalar(0.001);
+      scene.add(fish);
+      fishes.push(fish);
+    }
+
+    // Bomba sumergible y manguera al filtro
+    const pump = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.24, 0.24), matSolid(0x1E293B));
+    pump.position.set(-1.3, 0.16, 0);
+    pump.scale.setScalar(0.001);
+    scene.add(pump);
+
+    const hose = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.35, 10), matWater(0.85));
+    hose.position.set(-0.6, 0.9, 0);
+    hose.rotation.z = -Math.PI / 4;
+    hose.scale.setScalar(0.001);
+    scene.add(hose);
 
     const filter = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.38, 0.85, 20), matSolid(0x64748B));
     filter.position.set(0.15, 1.35, 0);
+    filter.scale.setScalar(0.001);
     scene.add(filter);
 
     const bed = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.5, 1.0), matSolid(0x475569));
     bed.position.set(1.35, 1.75, 0);
+    bed.scale.setScalar(0.001);
     scene.add(bed);
 
     const plants = [];
@@ -1800,16 +1921,36 @@ function buildModel3D(sysId) {
       plants.push(pl);
     });
 
+    // Tubo de rebose (Filtro -> Cama de cultivo)
+    const pipeFilterBed = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.9, 10), matSolid(0xCBD5E1));
+    pipeFilterBed.position.set(0.65, 1.68, 0);
+    pipeFilterBed.rotation.z = Math.PI / 2 - 0.15;
+    pipeFilterBed.scale.setScalar(0.001);
+    scene.add(pipeFilterBed);
+
+    // Tubo de retorno (Cama -> Cascada sobre el tanque)
+    const returnPipe = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.8, 10), matSolid(0xCBD5E1));
+    returnPipe.position.set(0.0, 1.52, 0.35);
+    returnPipe.rotation.z = Math.PI / 2 + 0.05;
+    returnPipe.scale.setScalar(0.001);
+    scene.add(returnPipe);
+
+    // Lámina / chorro de cascada cayendo al tanque
+    const cascadeSheet = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.075, 0.72, 12), matWater(0.82));
+    cascadeSheet.position.set(-0.92, 1.12, 0.35);
+    cascadeSheet.visible = false;
+    scene.add(cascadeSheet);
+
     const droplets = new THREE.Group();
-    for (let d = 0; d < 5; d++) {
-      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), matWater(0.85));
-      drop.position.set(-0.6, 1.1 + d * 0.15, 0);
+    for (let d = 0; d < 6; d++) {
+      const drop = new THREE.Mesh(new THREE.SphereGeometry(0.045, 8, 8), matWater(0.9));
+      drop.position.set(-0.92, 1.42 - d * 0.12, 0.35);
       droplets.add(drop);
     }
     droplets.visible = false;
     scene.add(droplets);
 
-    sceneParts = { tank, tankWater, fish, filter, bed, plants, droplets, waterPulse: tankWater };
+    sceneParts = { tank, tankWater, fishes, pump, hose, filter, pipeFilterBed, bed, plants, returnPipe, cascadeSheet, droplets, waterPulse: tankWater };
   }
 }
 
@@ -1885,56 +2026,97 @@ function applyStepAnimation(sysId, stepIdx) {
       plants.forEach(p => setTarget(p, { scale: [0.85, 0.85, 0.85], pos: [p.position.x, 0.92, p.position.z] }));
     }
   } else if (sysId === "1.3") {
-    const { water, cup, plant } = sceneParts;
+    const { maxRing, water, cup, sponge, plant } = sceneParts;
+    maxRing.visible = stepIdx >= 2;
     if (stepIdx === 0) {
-      setTarget(water, { opacity: 0 });
-      setTarget(cup, { scale: [0.001, 0.001, 0.001] });
+      // Paso 1: Galón oscuro bloqueando luz
+      setTarget(water, { opacity: 0, pos: [0, 0.72, 0], scale: [1, 1, 1] });
+      setTarget(cup, { scale: [0.001, 0.001, 0.001], pos: [0, 2.2, 0] });
+      setTarget(sponge, { scale: [0.001, 0.001, 0.001] });
       setTarget(plant, { scale: [0.001, 0.001, 0.001] });
     } else if (stepIdx === 1) {
-      setTarget(water, { opacity: 0 });
-      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.62, 0] });
+      // Paso 2: Montar vasito de red en la boca
+      setTarget(water, { opacity: 0, pos: [0, 0.72, 0], scale: [1, 1, 1] });
+      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.68, 0] });
+      setTarget(sponge, { scale: [0.001, 0.001, 0.001] });
       setTarget(plant, { scale: [0.001, 0.001, 0.001] });
     } else if (stepIdx === 2) {
-      setTarget(water, { opacity: 0.75 });
-      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.62, 0] });
+      // Paso 3: Llenado inicial tocando solo el fondo del vasito
+      setTarget(water, { opacity: 0.75, pos: [0, 0.72, 0], scale: [1, 1, 1] });
+      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.68, 0] });
+      setTarget(sponge, { scale: [0.001, 0.001, 0.001] });
       setTarget(plant, { scale: [0.001, 0.001, 0.001] });
     } else {
-      setTarget(water, { opacity: 0.75 });
-      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.62, 0] });
-      setTarget(plant, { scale: [1.15, 1.15, 1.15], pos: [0, 1.75, 0] });
+      // Paso 4: Nivel baja creando cámara de aire + plántula con esponja y raíces
+      setTarget(water, { opacity: 0.75, pos: [0, 0.42, 0], scale: [1, 0.52, 1] });
+      setTarget(cup, { scale: [1, 1, 1], pos: [0, 1.68, 0] });
+      setTarget(sponge, { scale: [1, 1, 1], pos: [0, 1.82, 0] });
+      setTarget(plant, { scale: [1.3, 1.3, 1.3], pos: [0, 1.84, 0] });
     }
   } else if (sysId === "1.4") {
-    const { bottles, plants, droplets } = sceneParts;
-    if (stepIdx <= 1) {
-      bottles.forEach((b, i) => setTarget(b, { pos: [(i - 1) * 1.15, 0.5, 0] }));
+    const { bottles, holes, winFrames, plants, droplets } = sceneParts;
+    winFrames.forEach(w => { w.visible = (stepIdx === 0); });
+    if (stepIdx === 0) {
+      bottles.forEach((b, i) => setTarget(b, { pos: [(i - 1) * 1.15, 0.55, 0], rot: [0, 0, 0] }));
+      holes.forEach(h => setTarget(h, { scale: [0.001, 0.001, 0.001] }));
+      plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
+      droplets.visible = false;
+    } else if (stepIdx === 1) {
+      bottles.forEach((b, i) => setTarget(b, { pos: [(i - 1) * 1.15, 0.72, 0], rot: [Math.PI, 0, 0] }));
+      holes.forEach(h => setTarget(h, { scale: [1, 1, 1] }));
       plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
       droplets.visible = false;
     } else if (stepIdx === 2) {
-      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.5 + i * 0.92, 0] }));
+      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.68 + i * 0.88, 0], rot: [Math.PI, 0, 0] }));
+      holes.forEach(h => setTarget(h, { scale: [1, 1, 1] }));
       plants.forEach(p => setTarget(p, { scale: [0.001, 0.001, 0.001] }));
       droplets.visible = false;
+    } else if (stepIdx === 3) {
+      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.68 + i * 0.88, 0], rot: [Math.PI, 0, 0] }));
+      plants.forEach((p, i) => setTarget(p, { scale: [0.85, 0.85, 0.85], pos: [0.36, 0.68 + i * 0.88, 0] }));
+      droplets.visible = false;
     } else {
-      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.5 + i * 0.92, 0] }));
-      plants.forEach(p => setTarget(p, { scale: [0.8, 0.8, 0.8] }));
+      bottles.forEach((b, i) => setTarget(b, { pos: [0, 0.68 + i * 0.88, 0], rot: [Math.PI, 0, 0] }));
+      plants.forEach((p, i) => setTarget(p, { scale: [0.85, 0.85, 0.85], pos: [0.36, 0.68 + i * 0.88, 0] }));
       droplets.visible = true;
     }
   } else if (sysId === "2.1") {
-    const { pump, plants } = sceneParts;
+    const { pump, riserHose, plants, tube1, tube2, returnStream } = sceneParts;
+    setTarget(tube1, { pos: [0.2, 1.9, 0], rot: [0, 0, Math.PI / 2 - 0.05] });
+    setTarget(tube2, { pos: [0.2, 1.2, 0], rot: [0, 0, Math.PI / 2 + 0.05] });
     setTarget(pump, { scale: stepIdx >= 1 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    setTarget(riserHose, { scale: stepIdx >= 1 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
     plants.forEach(p => setTarget(p, { scale: stepIdx >= 2 ? [0.75, 0.75, 0.75] : [0.001, 0.001, 0.001] }));
+    returnStream.visible = stepIdx >= 3;
   } else if (sysId === "2.2") {
-    const { hose, plants, droplets } = sceneParts;
-    setTarget(hose, { scale: stepIdx >= 1 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
-    droplets.visible = stepIdx >= 2;
-    plants.forEach(p => setTarget(p, { scale: stepIdx >= 3 ? [0.72, 0.72, 0.72] : [0.001, 0.001, 0.001] }));
+    const { pump, pockets, hose, plants, droplets, tower } = sceneParts;
+    setTarget(tower, { pos: [0, 1.65, 0] });
+    setTarget(pockets, { scale: stepIdx >= 1 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    setTarget(pump, { scale: stepIdx >= 2 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    setTarget(hose, { scale: stepIdx >= 2 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    droplets.visible = stepIdx >= 3;
+    plants.forEach(p => setTarget(p, { scale: stepIdx >= 4 ? [0.72, 0.72, 0.72] : [0.001, 0.001, 0.001] }));
   } else if (sysId === "2.3") {
-    const { waterTop, plant } = sceneParts;
+    const { waterTop, waterLow, plant, topGroup } = sceneParts;
+    setTarget(topGroup, { pos: [0, stepIdx === 0 ? 1.72 : 1.45, 0] });
     setTarget(waterTop, { opacity: stepIdx === 1 ? 0.72 : 0 });
+    setTarget(waterLow, { opacity: stepIdx === 1 ? 0.38 : 0.72 });
     setTarget(plant, { scale: stepIdx >= 3 ? [1.2, 1.2, 1.2] : [0.001, 0.001, 0.001] });
   } else {
-    const { plants, droplets } = sceneParts;
-    plants.forEach(p => setTarget(p, { scale: stepIdx >= 2 ? [0.85, 0.85, 0.85] : [0.001, 0.001, 0.001] }));
-    droplets.visible = stepIdx >= 3;
+    // 3.1 Sistema Acuapónico Integral (Ciclo + 3 Piezas)
+    const { tank, tankWater, fishes, pump, hose, filter, pipeFilterBed, bed, plants, returnPipe, cascadeSheet, droplets } = sceneParts;
+    setTarget(tank, { pos: [-1.3, 0.58, 0] });
+    setTarget(tankWater, { opacity: stepIdx >= 1 ? 0.68 : 0 });
+    fishes.forEach(f => setTarget(f, { scale: stepIdx >= 1 ? [1.6, 0.7, 0.55] : [0.001, 0.001, 0.001] }));
+    setTarget(pump, { scale: stepIdx >= 2 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    setTarget(hose, { scale: stepIdx >= 2 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    setTarget(filter, { scale: stepIdx >= 3 ? [1, 1, 1] : [0.001, 0.001, 0.001], pos: [0.15, stepIdx >= 3 ? 1.35 : 2.1, 0] });
+    setTarget(pipeFilterBed, { scale: stepIdx >= 4 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    setTarget(bed, { scale: stepIdx >= 4 ? [1, 1, 1] : [0.001, 0.001, 0.001], pos: [1.35, stepIdx >= 4 ? 1.75 : 2.5, 0] });
+    plants.forEach(p => setTarget(p, { scale: stepIdx >= 4 ? [0.85, 0.85, 0.85] : [0.001, 0.001, 0.001] }));
+    setTarget(returnPipe, { scale: stepIdx >= 5 ? [1, 1, 1] : [0.001, 0.001, 0.001] });
+    cascadeSheet.visible = stepIdx >= 5;
+    droplets.visible = stepIdx >= 5;
   }
 }
 
@@ -1954,7 +2136,8 @@ function openViewer(sysId) {
 
   document.getElementById('viewer-title').textContent = `${res.sys.id} ${res.sys.name}`;
   document.getElementById('viewer-subtitle').textContent = `${res.lvl.badge} • ${res.sys.specs}`;
-  document.getElementById('viewer-meta').innerHTML = `<strong>☀ Luz:</strong> ${res.sys.luz}<br><strong>💧 Agua/Manejo:</strong> ${res.sys.agua}`;
+  const bombaHtml = res.sys.bomba ? `<br><strong>⚙️ Bomba:</strong> ${res.sys.bomba}` : '';
+  document.getElementById('viewer-meta').innerHTML = `<strong>☀ Luz:</strong> ${res.sys.luz}<br><strong>💧 Agua/Manejo:</strong> ${res.sys.agua}${bombaHtml}`;
 
   document.getElementById('viewer-overlay').classList.add('open');
   initThree();
